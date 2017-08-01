@@ -1,0 +1,19 @@
+doctype html
+html
+  head
+      link(rel='stylesheet', href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css")
+      style
+        include style.css
+      script(src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js", type='text/javascript')
+  body
+    div.row
+      div.col-xs-12.col-sm-6.col-md-6
+        div.well.well-sm
+          div.row
+            div.col-sm-6.col-md-4
+              img.img-rounded.img-responsive(src=image_url)
+            div.col-sm-6.col-md-8
+              h4= full_name
+              p
+                i.glyphicon.glyphicon-envelope
+                = email
