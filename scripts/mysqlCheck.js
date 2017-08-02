@@ -3,8 +3,8 @@ var mysql = require('mysql');
 var createDatabase = function() {
   var connection = mysql.createConnection({
     host: 'localhost',
-    user: 'root',
-    password: 'root1234',
+    user: process.env.mysql_user,
+    password: process.env.mysql_password,
   });
   connection.connect(function(err) {
     if (err) throw err;
@@ -24,7 +24,7 @@ var createDatabase = function() {
 }
 
 var createTable = function(connection) {
-    var sql = "CREATE TABLE foodies (id VARCHAR(255), full_name VARCHAR(255), given_name VARCHAR(255), family_name VARCHAR(255), image_url VARCHAR(255), email VARCHAR(255), token VARCHAR(255))";
+    var sql = "CREATE TABLE foodies (id VARCHAR(255), full_name VARCHAR(255), image_url VARCHAR(255), email VARCHAR(255))";
     connection.query(sql, function (err, result) {
       if (err) throw err;
     });

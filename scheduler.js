@@ -1,6 +1,6 @@
 var schedule = require('node-schedule');
-var api_key = '';
-var domain = '';
+var api_key = process.env.mailgun_key;
+var domain = process.env.mailgun_domain;
 var mailgun = require('mailgun-js')({apiKey: api_key, domain: domain});
 var db = require('./db');
 
