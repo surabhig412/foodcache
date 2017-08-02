@@ -9,7 +9,9 @@
     "mysql": "~2.13.0",
     "express": "~4.15.3",
     "body-parser": "~1.17.2",
-    "jade": "~1.11.0"
+    "jade": "~1.11.0",
+    "node-schedule": "~1.2.3",
+    "mailgun-js": "~0.12.0"
   },
   "scripts" : {
     "prestart" : "node scripts/mysqlCheck.js",

@@ -4,6 +4,7 @@ var bodyParser = require('body-parser');
 app.use(bodyParser.urlencoded({'extended':'true'}));
 app.set("view engine","jade");
 var db = require('./db');
+var schedule = require('./scheduler');
 
 app.get('/', function(req, res) {
   res.sendFile(path.join(__dirname + '/views/index.html'));
