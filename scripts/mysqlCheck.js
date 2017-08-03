@@ -17,6 +17,12 @@ var createDatabase = function() {
         if(result.length === 0) {
           createTable(connection);
         }
+      });
+      connection.query("SHOW TABLES LIKE 'admin'", function(err, result) {
+        if(err) throw err;
+        if(result.length === 0) {
+          createAdminTable(connection);
+        }
         connection.end();
       });
     });
@@ -24,8 +30,19 @@ var createDatabase = function() {
 }
 
 var createTable = function(connection) {
-    var sql = "CREATE TABLE foodies (id VARCHAR(255), full_name VARCHAR(255), image_url VARCHAR(255), email VARCHAR(255))";
+    var sql = "CREATE TABLE foodies (id VARCHAR(255), full_name VARCHAR(255), image_url VARCHAR(255), email VARCHAR(255), amount_due DECIMAL(15,2))";
     connection.query(sql, function (err, result) {
+      if (err) throw err;
+    });
+}
+
+var createAdminTable = function(connection) {
+    var sql = "CREATE TABLE admin (username VARCHAR(255), password VARCHAR(255))";
+    connection.query(sql, function (err, result) {
+      if (err) throw err;
+    });
+    var admin_details = {username: process.env.admin_user, password: process.env.admin_password};
+    connection.query("INSERT into admin set ?", admin_details, function (err, result) {
       if (err) throw err;
     });
 }

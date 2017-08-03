@@ -1,0 +1,26 @@
+doctype html
+html
+  head
+    link(rel='stylesheet', href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css")
+    style
+      include style.css
+  body
+    h1 User Details
+    table.table.table-bordered
+      thead
+        tr
+          th Name
+          th Email
+          th Amount Due(in Rs.)
+          th Action
+      tbody
+        - for(var i = 0; i < foodies.length; i++) {
+            tr
+              td= foodies[i].full_name
+              td= foodies[i].email
+              td= foodies[i].amount_due
+              if foodies[i].amount_due === 0
+                td Settled
+              else
+                td To be paid
+        - }

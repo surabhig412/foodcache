@@ -27,20 +27,42 @@ app.get('/redirect', function(req, res) {
     }, function (err, response) {
       db.query("select * from foodies where email = ?", response.emails[0].value, function(err, result) {
         if(err) res.send(err);
-        var foodie = {id: response.id, full_name: response.displayName, image_url: response.image.url, email: response.emails[0].value};
+        var foodie = {id: response.id, full_name: response.displayName, image_url: response.image.url, email: response.emails[0].value, amount_due: 0};
         if(result.length === 0) {
           db.query("insert into foodies set ?", foodie, function(err, result) {
             if(err) res.send(err);
           });
         }
-        res.render('profile', foodie);
+        res.render('profile.jade', foodie);
       });
     });
   });
 });
 
+app.get('/admin', function(req, res) {
+  res.render('admin.jade');
+});
+
+app.post('/admin-login', function(req, res) {
+  db.query("select * from admin", function(err, result) {
+    if(err) res.send(err);
+    if(result[0].username !== req.body.username || result[0].password !== req.body.password) {
+      res.redirect('/admin');
+      return;
+    }
+    res.redirect('/admin/users/details');
+  });
+});
+
+app.get('/admin/users/details', function(req, res) {
+  db.query("select * from foodies", function(err, result) {
+    if(err) res.send(err);
+    var str = JSON.stringify(result);
+    res.render('users.jade', {foodies: JSON.parse(str)});
+  });
+});
+
 app.get('/logout', function(req, res) {
-  console.log("logout called");
   res.redirect('/');
 });
 
