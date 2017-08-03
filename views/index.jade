@@ -1,9 +1,20 @@
 doctype html
 html
   head
-    title= title
-    link(rel='stylesheet', href='/stylesheets/style.css')
-    script(data-main='javascript/main', src='javascript/require.js', type='text/javascript')
+    link(rel='stylesheet', href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css")
+    link(rel='stylesheet', href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css")
+    style
+      include style.css
   body
     h1= title
-    a(href= url)= "Google signIn"
+    .panel.panel-info
+      .panel-heading
+        h3.panel-title Please Sign In
+      .panel-body
+        .row
+          .col-md-4
+            a(href= url).fa.fa-google-plus-square.fa-6 &nbsp;Google SignIn
+          .col-md-4
+            a(href= url).fa.fa-facebook-square.fa-6 &nbsp;Facebook SignIn
+          .col-md-4
+            a(href= url).fa.fa-twitter-square.fa-6 &nbsp;Twitter SignIn

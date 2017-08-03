@@ -39,5 +39,10 @@ app.get('/redirect', function(req, res) {
   });
 });
 
+app.get('/logout', function(req, res) {
+  console.log("logout called");
+  res.redirect('/');
+});
+
 console.log("server started at port 8071");
 app.listen(8071)
