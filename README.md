@@ -1,16 +1,18 @@
 # node-best-before
-A simple application in nodeJS which collects money and sends mails every month for food items, etc.
+A simple application in nodeJS which keeps track of money paid and received for a pantry. It also gives monthly email alerts to all its users. The admin of this application can handle accounts and can view which users still owe money.
 
 # Prerequisites
 
-* mysql database
+* Mysql database
 
-* mailgun key credentials
+* Mailgun key credentials
+
+* Google clientID and client secret for Oauth Authorization of the web application. You can create your credentials from [here](https://developers.google.com/adwords/api/docs/guides/authentication#webapp).
 
 # Steps to run the application
 
 * Set the following environment variables:
-  * export google_client_id=`<give your google client_id>`
+  * export google_client_id=`<give your google clientID>`
   * export google_client_secret=`<give your google client secret>`
   * export mailgun_key=`<your mailgun api key>`
   * export mailgun_domain=`<your mailgun domain>`
