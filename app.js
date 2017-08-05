@@ -50,15 +50,22 @@ app.post('/admin-login', function(req, res) {
       res.redirect('/admin');
       return;
     }
-    res.redirect('/admin/users/details');
+    res.redirect('/users/details');
   });
 });
 
-app.get('/admin/users/details', function(req, res) {
+app.get('/users/details', function(req, res) {
   db.query("select * from foodies", function(err, result) {
     if(err) res.send(err);
     var str = JSON.stringify(result);
     res.render('users.jade', {foodies: JSON.parse(str)});
+  });
+});
+
+app.post('/users/details/update', function(req, res) {
+  db.query("update foodies set amount_due = 0 where serial_no = ?", req.body.serial_no, function(err, result) {
+    if(err) res.send(err);
+    res.render('');
   });
 });
 

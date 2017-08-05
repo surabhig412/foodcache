@@ -5,6 +5,12 @@ var mailgun = require('mailgun-js')({apiKey: api_key, domain: domain});
 var db = require('./db');
 
 var j = schedule.scheduleJob('0 0 10 1 * *', function() {
+  db.query("update foodies set amount_due = amount_due + 100", function(err, result) {
+    if(err) {
+      console.log(err);
+      return;
+    }
+  });
   db.query("select email from foodies", function(err, result) {
     if(err) {
       console.log(err);

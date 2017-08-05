@@ -30,7 +30,7 @@ var createDatabase = function() {
 }
 
 var createTable = function(connection) {
-    var sql = "CREATE TABLE foodies (id VARCHAR(255), full_name VARCHAR(255), image_url VARCHAR(255), email VARCHAR(255), amount_due DECIMAL(15,2))";
+    var sql = "CREATE TABLE foodies (serial_no INT AUTO_INCREMENT PRIMARY KEY, id VARCHAR(255), full_name VARCHAR(255), image_url VARCHAR(255), email VARCHAR(255), amount_due DECIMAL(15,2))";
     connection.query(sql, function (err, result) {
       if (err) throw err;
     });

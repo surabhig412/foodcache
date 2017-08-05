@@ -4,6 +4,10 @@ html
     link(rel='stylesheet', href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css")
     style
       include style.css
+    script(src='https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js')
+    script
+      include script.js
+
   body
     h1 User Details
     table.table.table-bordered
@@ -19,8 +23,10 @@ html
               td= foodies[i].full_name
               td= foodies[i].email
               td= foodies[i].amount_due
-              if foodies[i].amount_due === 0
-                td Settled
+              if foodies[i].amount_due !== 0
+                td
+                  button.btn.btn-primary.paid-btn(type='button', onclick='paidBtnClicked(' + foodies[i].serial_no + ')') Paid
               else
-                td To be paid
+                td
+
         - }
