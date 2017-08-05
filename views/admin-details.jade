@@ -1,0 +1,48 @@
+doctype html
+html
+  head
+    link(rel='stylesheet', href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css")
+    style
+      include style.css
+    script(src='https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js')
+    script
+      include script.js
+
+  body
+    a(href='#')#admin_logout.pull-right
+      span.glyphicon.glyphicon-log-out &nbsp;Logout
+    h1 User Details
+    table.table.table-bordered
+      thead
+        tr
+          th Name
+          th Email
+          th Amount Due(in Rs.)
+          th Action
+      tbody
+        each foodie in foodies
+          tr
+            td= foodie.full_name
+            td= foodie.email
+            td= foodie.amount_due
+            if foodie.amount_due !== 0
+              td
+                button.btn.btn-primary.paid-btn(type='button', onclick='paidBtnClicked(' + foodie.serial_no + ', ' + foodie.amount_due + ')') Paid
+            else
+              td
+
+    h1 Account Details
+    table.table.table-bordered
+      thead
+        tr
+          th Balance Amount
+          th= admin_details[0].amount_received
+    br
+    table.table.table-bordered
+      thead
+        tr
+          th Amount Used
+          th
+            input.pull-right#amount_used(type='text', name='amount_used')
+          th
+            button.btn.btn-primary.update-blnc-btn(type='button', onclick='updateBalanceBtnClicked()') Update Balance

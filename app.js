@@ -1,13 +1,18 @@
 var app = require('express')();
 var path = require('path');
 var bodyParser = require('body-parser');
-app.use(bodyParser.urlencoded({'extended':'true'}));
 app.set("view engine","jade");
 var db = require('./db');
 var schedule = require('./scheduler');
 var gapi = require('./gapi');
 var googleapis = require('googleapis');
 var plus = googleapis.plus('v1');
+var cookieParser = require('cookie-parser');
+var session = require('express-session');
+
+app.use(cookieParser());
+app.use(session({secret: "secret"}));
+app.use(bodyParser.urlencoded({'extended':'true'}));
 
 app.get('/', function(req, res) {
   var locals = {
@@ -50,27 +55,62 @@ app.post('/admin-login', function(req, res) {
       res.redirect('/admin');
       return;
     }
-    res.redirect('/users/details');
+    req.session.admin_login = true;
+    res.redirect('/admin/details');
   });
 });
 
-app.get('/users/details', function(req, res) {
-  db.query("select * from foodies", function(err, result) {
-    if(err) res.send(err);
-    var str = JSON.stringify(result);
-    res.render('users.jade', {foodies: JSON.parse(str)});
-  });
+app.get('/admin/details', function(req, res) {
+  if(checkAdminLoggedIn(req, res)) {
+    var foodies_result;
+    db.query("select * from foodies", function(err, result) {
+      if(err) res.send(err);
+      foodies_result = JSON.stringify(result);
+    });
+    db.query("select amount_received from admin", function(err, result) {
+      if(err) res.send(err);
+      var admin_result = JSON.stringify(result);
+      res.render('admin-details.jade', {foodies: JSON.parse(foodies_result), admin_details: JSON.parse(admin_result)});
+    });
+  }
 });
 
-app.post('/users/details/update', function(req, res) {
-  db.query("update foodies set amount_due = 0 where serial_no = ?", req.body.serial_no, function(err, result) {
-    if(err) res.send(err);
-    res.render('');
-  });
+app.post('/admin/users/details/update', function(req, res) {
+  if(checkAdminLoggedIn(req, res)) {
+    db.query("update admin set amount_received = amount_received + ?", req.body.amount, function(err, result) {
+      if(err) res.send(err);
+    });
+    db.query("update foodies set amount_due = 0 where serial_no = ?", req.body.serial_no, function(err, result) {
+      if(err) res.send(err);
+      res.render('');
+    });
+  }
 });
 
-app.get('/logout', function(req, res) {
-  res.redirect('/');
+app.post('/admin/amount/update', function(req, res) {
+  if(checkAdminLoggedIn(req, res)) {
+    db.query("update admin set amount_received = amount_received - ?", req.body.amount, function(err, result) {
+      if(err) res.send(err);
+      res.render('');
+    });
+  }
+});
+
+var checkAdminLoggedIn = function(req, res) {
+  if(req.session.admin_login === undefined || req.session.admin_login === false) {
+    res.redirect('/admin');
+    return false;
+  }
+  return true;
+}
+
+app.post('/logout', function(req, res) {
+  res.render('');
+});
+
+app.post('/admin-logout', function(req, res) {
+  req.session.admin_login = false;
+  res.render('');
 });
 
 console.log("server started at port 8071");

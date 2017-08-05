@@ -37,11 +37,11 @@ var createTable = function(connection) {
 }
 
 var createAdminTable = function(connection) {
-    var sql = "CREATE TABLE admin (username VARCHAR(255), password VARCHAR(255))";
+    var sql = "CREATE TABLE admin (username VARCHAR(255), password VARCHAR(255), amount_received DECIMAL(15,2))";
     connection.query(sql, function (err, result) {
       if (err) throw err;
     });
-    var admin_details = {username: process.env.admin_user, password: process.env.admin_password};
+    var admin_details = {username: process.env.admin_user, password: process.env.admin_password, amount_received: 0};
     connection.query("INSERT into admin set ?", admin_details, function (err, result) {
       if (err) throw err;
     });
