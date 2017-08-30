@@ -37,6 +37,8 @@ app.get('/redirect', function(req, res) {
           db.query("insert into foodies set ?", foodie, function(err, result) {
             if(err) res.send(err);
           });
+        } else {
+          foodie["amount_due"] = result[0].amount_due;
         }
         res.render('profile.jade', foodie);
       });
