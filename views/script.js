@@ -18,7 +18,7 @@ $(document).on('click', '#admin_logout', function(){
     url: '/admin-logout',
     method: 'post',
     success: function(data) {
-      window.location.href = '/admin';
+      window.location.href = '/';
     },
     error: function(data) {
       console.log("error occurred");

@@ -1,4 +1,4 @@
-# node-best-before
+# foodcache
 A simple application in nodeJS which keeps track of money paid and received for a pantry. It also gives monthly email alerts to all its users. The admin of this application can handle accounts and can view which users still owe money.
 
 # Prerequisites

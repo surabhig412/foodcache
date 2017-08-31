@@ -16,7 +16,7 @@ app.use(bodyParser.urlencoded({'extended':'true'}));
 
 app.get('/', function(req, res) {
   var locals = {
-        title: 'Best Before',
+        title: 'FoodCache',
         url: gapi.url
       };
   res.render('index.jade', locals);
@@ -46,15 +46,11 @@ app.get('/redirect', function(req, res) {
   });
 });
 
-app.get('/admin', function(req, res) {
-  res.render('admin.jade');
-});
-
 app.post('/admin-login', function(req, res) {
   db.query("select * from admin", function(err, result) {
     if(err) res.send(err);
     if(result[0].username !== req.body.username || result[0].password !== req.body.password) {
-      res.redirect('/admin');
+      res.redirect('/');
       return;
     }
     req.session.admin_login = true;
@@ -100,7 +96,7 @@ app.post('/admin/amount/update', function(req, res) {
 
 var checkAdminLoggedIn = function(req, res) {
   if(req.session.admin_login === undefined || req.session.admin_login === false) {
-    res.redirect('/admin');
+    res.redirect('/');
     return false;
   }
   return true;
