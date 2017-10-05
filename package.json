@@ -1,11 +1,11 @@
 {
-  "name"         : "best-before",
-  "version"      : "0.0.1",
-  "description"  : "Simple application to keep track of money paid for office food items",
-  "private"      : true,
-  "main"         : "app.js",
-  "author"       : "Surabhi",
-  "dependencies" : {
+  "name": "best-before",
+  "version": "0.0.1",
+  "description": "Simple application to keep track of money paid for office food items",
+  "private": true,
+  "main": "app.js",
+  "author": "Surabhi",
+  "dependencies": {
     "mysql": "~2.13.0",
     "express": "~4.15.3",
     "body-parser": "~1.17.2",
@@ -16,8 +16,8 @@
     "cookie-parser": "~1.4.3",
     "express-session": "~1.15.5"
   },
-  "scripts" : {
-    "prestart" : "node scripts/mysqlCheck.js",
-    "start" : "node app.js"
-    }
+  "scripts": {
+    "prestart": "node scripts/mysqlCheck.js",
+    "start": "node app.js"
+  }
 }

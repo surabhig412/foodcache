@@ -40,11 +40,20 @@ function paidBtnClicked(serial_no, amount) {
   });
 }
 
-function updateBalanceBtnClicked() {
+$(document).ready(function() {
+  $('#multiple-fooditems').multiselect();
+});
+
+function purchaseBtnClicked() {
+  console.log("purchaseBtnClicked ");
   $.ajax({
-    url: '/admin/amount/update',
+    url: '/admin/items/purchase',
     method: 'post',
-    data: {amount: $('#amount_used').val()},
+    data: {
+      amount: $('#amount').val(),
+      description: $('#description').val(),
+      items: $('#multiple-fooditems').val().toString()
+    },
     success: function(data) {
       window.location.reload();
     },

@@ -23,6 +23,12 @@ var createDatabase = function() {
         if(result.length === 0) {
           createAdminTable(connection);
         }
+      });
+      connection.query("SHOW TABLES LIKE 'fooditems'", function(err, result) {
+        if(err) throw err;
+        if(result.length === 0) {
+          createFoodItemsTable(connection);
+        }
         connection.end();
       });
     });
@@ -43,6 +49,13 @@ var createAdminTable = function(connection) {
     });
     var admin_details = {username: process.env.admin_user, password: process.env.admin_password, amount_received: 0};
     connection.query("INSERT into admin set ?", admin_details, function (err, result) {
+      if (err) throw err;
+    });
+}
+
+var createFoodItemsTable = function(connection) {
+    var sql = "CREATE TABLE fooditems (id INT AUTO_INCREMENT PRIMARY KEY, items VARCHAR(255), description VARCHAR(255), amount DECIMAL(15,2))";
+    connection.query(sql, function (err, result) {
       if (err) throw err;
     });
 }
