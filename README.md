@@ -18,6 +18,7 @@ A simple application in nodeJS which keeps track of money paid and received for 
   * export mailgun_domain=`<your mailgun domain>`
   * export mysql_user=`<your mysql user>`
   * export mysql_password=`<your mysql password>`
+  * export mysql_host=`<your mysql host>`
   * export admin_user=`<application admin username>`
   * export admin_password=`<application admin password>`
 
