@@ -18,7 +18,7 @@ var j = schedule.scheduleJob('0 0 10 1 * *', function() {
     }
     for(var email in result) {
       var data = {
-        from: 'Best Before <donotreply@bestbefore.com>',
+        from: 'Foodcache <donotreply@foodcache.com>',
         to: result[email].email,
         subject: 'Gentle reminder to pay monthly dues.',
         text: 'Please pay an amount of Rs. 100 for this month'

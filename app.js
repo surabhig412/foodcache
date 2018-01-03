@@ -106,7 +106,7 @@ app.post('/admin/items/purchase', function(req, res) {
       for(var email in result) {
         console.log("Email " + result[email].email);
         var data = {
-          from: 'Best Before <donotreply@bestbefore.com>',
+          from: 'Foodcache <donotreply@foodcache.com>',
           to: result[email].email,
           subject: 'New food items purchased',
           text: 'Food items purchased. Come and check.'
@@ -137,5 +137,5 @@ app.post('/admin-logout', function(req, res) {
   res.render('');
 });
 
-console.log("server started at port 8071");
-app.listen(8071)
+console.log("server started at port 3000");
+app.listen(3000)

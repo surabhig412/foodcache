@@ -14,6 +14,7 @@ A simple application in nodeJS which keeps track of money paid and received for 
 * Set the following environment variables:
   * export google_client_id=`<give your google clientID>`
   * export google_client_secret=`<give your google client secret>`
+  * export google_redirect_url=`<give your oauth redirect url for google>`
   * export mailgun_key=`<your mailgun api key>`
   * export mailgun_domain=`<your mailgun domain>`
   * export mysql_user=`<your mysql user>`
