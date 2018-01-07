@@ -40,6 +40,25 @@ function paidBtnClicked(serial_no, amount) {
   });
 }
 
+function editBtnClicked(obj, serial_no) {
+  $(obj).closest('tr')[0].cells[2].innerHTML = '<input type=text class="pull-right" id="editamount" value=' + $(obj).closest('tr')[0].cells[2].innerHTML + '></input>'
+  $(obj).closest('tr')[0].cells[4].innerHTML = "<button class='btn btn-primary save-btn' type='button' onclick=saveBtnClicked(" + serial_no + ")>Save</button>"
+}
+
+function saveBtnClicked(serial_no) {
+  $.ajax({
+    url: '/admin/users/details/edit',
+    method: 'post',
+    data: {serial_no: serial_no, amount: $('#editamount').val()},
+    success: function(data) {
+      window.location.reload();
+    },
+    error: function(data) {
+      console.log("error occurred " + data);
+    }
+  });
+}
+
 $(document).ready(function() {
   $('#multiple-fooditems').multiselect();
 });

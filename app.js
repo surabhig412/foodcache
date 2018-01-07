@@ -92,6 +92,17 @@ app.post('/admin/users/details/update', function(req, res) {
   }
 });
 
+app.post('/admin/users/details/edit', function(req, res) {
+  if(checkAdminLoggedIn(req, res)) {
+    db.query("update foodies set amount_due = ? where serial_no = ?", [req.body.amount, req.body.serial_no], function(err, result) {
+      if(err) {
+        res.send(err);
+      }
+      res.render('');
+    });
+  }
+});
+
 app.post('/admin/items/purchase', function(req, res) {
   if(checkAdminLoggedIn(req, res)) {
     var fooditem = {amount: req.body.amount, description: req.body.description, items: req.body.items}

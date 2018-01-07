@@ -22,6 +22,7 @@ html
           th Email
           th Amount Due(in Rs.)
           th Action
+          th
       tbody
         each foodie in foodies
           tr
@@ -33,6 +34,8 @@ html
                 button.btn.btn-primary.paid-btn(type='button', onclick='paidBtnClicked(' + foodie.serial_no + ', ' + foodie.amount_due + ')') Paid
             else
               td
+            td
+              button.btn.btn-primary.edit-btn(type='button', onclick='editBtnClicked(this, ' + foodie.serial_no + ')') Edit
 
     h1 Account Details
     table.table.table-bordered
