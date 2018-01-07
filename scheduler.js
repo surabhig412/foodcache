@@ -11,17 +11,17 @@ var j = schedule.scheduleJob('0 0 10 1 * *', function() {
       return;
     }
   });
-  db.query("select email from foodies", function(err, result) {
+  db.query("select * from foodies", function(err, result) {
     if(err) {
       console.log(err);
       return;
     }
-    for(var email in result) {
+    for(var index in result) {
       var data = {
         from: 'Foodcache <donotreply@foodcache.com>',
-        to: result[email].email,
+        to: result[index].email,
         subject: 'Gentle reminder to pay monthly dues.',
-        text: 'Please pay an amount of Rs. 100 for this month'
+        text: 'Please pay an amount of Rs. 100 for this month. Your total due amount is Rs. ' + result[index].amount_due
       };
 
       mailgun.messages().send(data, function (error, body) {
