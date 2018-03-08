@@ -24,6 +24,12 @@ var createDatabase = function() {
           createAdminTable(connection);
         }
       });
+      connection.query("SHOW TABLES LIKE 'foodstock'", function(err, result) {
+        if(err) throw err;
+        if(result.length === 0) {
+          createFoodstockTable(connection);
+        }
+      });
       connection.query("SHOW TABLES LIKE 'fooditems'", function(err, result) {
         if(err) throw err;
         if(result.length === 0) {
@@ -49,6 +55,16 @@ var createAdminTable = function(connection) {
     });
     var admin_details = {username: process.env.admin_user, password: process.env.admin_password, amount_received: 0};
     connection.query("INSERT into admin set ?", admin_details, function (err, result) {
+      if (err) throw err;
+    });
+}
+
+var createFoodstockTable = function(connection) {
+    var sql = "CREATE TABLE foodstock (id INT AUTO_INCREMENT PRIMARY KEY, fooditem VARCHAR(255))";
+    connection.query(sql, function (err, result) {
+      if (err) throw err;
+    });
+    connection.query("INSERT into foodstock(fooditem) values ('Biscuits'),('Milk Powder'),('Coffee'),('Tea'),('Sugar'),('Snacks'),('Vim')", function (err, result) {
       if (err) throw err;
     });
 }

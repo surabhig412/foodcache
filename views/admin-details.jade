@@ -56,13 +56,8 @@ html
         tr
           td
             select#multiple-fooditems(multiple='multiple')
-              option(value='biscuits') Biscuits
-              option(value='milk_powder') Milk Powder
-              option(value='coffee') Coffee
-              option(value='tea') Tea
-              option(value='sugar') Sugar
-              option(value='snacks') Snacks
-              option(value='vim') Vim Liquid
+              each item in foodstock
+                option(value="#{item.fooditem}") #{item.fooditem}
           td
             input#description(type='text', name='description')
           td
@@ -74,3 +69,20 @@ html
             td= fooditem.items
             td= fooditem.description
             td= fooditem.amount
+    h1 Foodstock Details
+    table.table.table-bordered
+      thead
+        tr
+          th Item
+          th Action
+      tbody
+        each item in foodstock
+          tr
+            td= item.fooditem
+            td
+              button.btn.btn-primary.delete-foodstock-btn(type='button', onclick='deleteFoodstockBtnClicked(' + item.id + ')') Delete
+        tr
+          td
+            input#foodstock_item(type='text', name='foodstock_item')
+          td
+            button.btn.btn-primary.add-foodstock-btn(type='button', onclick='addFoodstockBtnClicked()') Add

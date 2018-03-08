@@ -64,7 +64,6 @@ $(document).ready(function() {
 });
 
 function purchaseBtnClicked() {
-  console.log("purchaseBtnClicked ");
   $.ajax({
     url: '/admin/items/purchase',
     method: 'post',
@@ -72,6 +71,38 @@ function purchaseBtnClicked() {
       amount: $('#amount').val(),
       description: $('#description').val(),
       items: $('#multiple-fooditems').val().toString()
+    },
+    success: function(data) {
+      window.location.reload();
+    },
+    error: function(data) {
+      console.log("error occurred " + data);
+    }
+  });
+}
+
+function addFoodstockBtnClicked() {
+  $.ajax({
+    url: '/admin/foodstock/add',
+    method: 'post',
+    data: {
+      fooditem: $('#foodstock_item').val(),
+    },
+    success: function(data) {
+      window.location.reload();
+    },
+    error: function(data) {
+      console.log("error occurred " + data);
+    }
+  });
+}
+
+function deleteFoodstockBtnClicked(id) {
+  $.ajax({
+    url: '/admin/foodstock/delete',
+    method: 'post',
+    data: {
+      id: id,
     },
     success: function(data) {
       window.location.reload();

@@ -63,7 +63,7 @@ app.post('/admin-login', function(req, res) {
 
 app.get('/admin/details', function(req, res) {
   if(checkAdminLoggedIn(req, res)) {
-    var foodies_result, fooditems_result;
+    var foodies_result, fooditems_result, foodstock_result;
     db.query("select * from foodies", function(err, result) {
       if(err) res.send(err);
       foodies_result = JSON.stringify(result);
@@ -72,10 +72,14 @@ app.get('/admin/details', function(req, res) {
       if(err) res.send(err);
       fooditems_result = JSON.stringify(result);
     });
+    db.query("select * from foodstock", function(err, result) {
+      if(err) res.send(err);
+      foodstock_result = JSON.stringify(result);
+    });
     db.query("select amount_received from admin", function(err, result) {
       if(err) res.send(err);
       var admin_result = JSON.stringify(result);
-      res.render('admin-details.jade', {foodies: JSON.parse(foodies_result), admin_details: JSON.parse(admin_result), fooditems: JSON.parse(fooditems_result)});
+      res.render('admin-details.jade', {foodies: JSON.parse(foodies_result), admin_details: JSON.parse(admin_result), fooditems: JSON.parse(fooditems_result), foodstock: JSON.parse(foodstock_result)});
     });
   }
 });
@@ -87,6 +91,18 @@ app.post('/admin/users/details/update', function(req, res) {
     });
     db.query("update foodies set amount_due = 0 where serial_no = ?", req.body.serial_no, function(err, result) {
       if(err) res.send(err);
+    });
+    db.query("select email from foodies where serial_no = ?", req.body.serial_no, function(err, result) {
+      if(err) res.send(err);
+        var data = {
+          from: 'Foodcache <donotreply@foodcache.com>',
+          to: result[0].email,
+          subject: 'Received payment',
+          text: 'Received payment of Rs. ' + req.body.amount
+        };
+        mailgun.messages().send(data, function (error, body) {
+          console.log(error);
+        });
       res.render('');
     });
   }
@@ -125,6 +141,29 @@ app.post('/admin/items/purchase', function(req, res) {
         mailgun.messages().send(data, function (error, body) {
           console.log(error);
         });
+      }
+      res.render('');
+    });
+  }
+});
+
+app.post('/admin/foodstock/add', function(req, res) {
+  if(checkAdminLoggedIn(req, res)) {
+    var foodstock_item = {fooditem: req.body.fooditem}
+    db.query("insert into foodstock set ?", foodstock_item, function(err, result) {
+      if(err) {
+        res.send(err);
+      }
+      res.render('');
+    });
+  }
+});
+
+app.post('/admin/foodstock/delete', function(req, res) {
+  if(checkAdminLoggedIn(req, res)) {
+    db.query("delete from foodstock where id= ?", req.body.id, function(err, result) {
+      if(err) {
+        res.send(err);
       }
       res.render('');
     });
