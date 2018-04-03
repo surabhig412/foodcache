@@ -119,6 +119,16 @@ app.post('/admin/users/details/edit', function(req, res) {
   }
 });
 
+function formatItems(items) {
+  var lastCommaIndex = items.lastIndexOf(",");
+  if (lastCommaIndex !== -1) {
+    items = "are " + items.substr(0, lastCommaIndex) + " and " + items.substr(lastCommaIndex + 1, items.length);
+    return items.toLowerCase();
+  } else {
+    return "is " + items.toLowerCase();
+  }
+}
+
 app.post('/admin/items/purchase', function(req, res) {
   if(checkAdminLoggedIn(req, res)) {
     var fooditem = {amount: req.body.amount, description: req.body.description, items: req.body.items}
@@ -131,12 +141,11 @@ app.post('/admin/items/purchase', function(req, res) {
     db.query("select email from foodies", function(err, result) {
       if(err) res.send(err);
       for(var email in result) {
-        console.log("Email " + result[email].email);
         var data = {
           from: 'Foodcache <donotreply@foodcache.com>',
           to: result[email].email,
           subject: 'New food items purchased',
-          text: 'Food items purchased. Come and check.'
+          text: 'Food items purchased ' + formatItems(req.body.items) + '. Come and check.'
         };
         mailgun.messages().send(data, function (error, body) {
           console.log(error);
