@@ -8,10 +8,10 @@ var createDatabase = function() {
   });
   connection.connect(function(err) {
     if (err) throw err;
-    var sql = "CREATE DATABASE IF NOT EXISTS bestBefore";
+    var sql = "CREATE DATABASE IF NOT EXISTS foodcache";
     connection.query(sql, function (err, result) {
       if (err) throw err;
-      connection.query("use bestBefore");
+      connection.query("use foodcache");
       connection.query("SHOW TABLES LIKE 'foodies'", function(err, result) {
         if(err) throw err;
         if(result.length === 0) {
