@@ -6,7 +6,7 @@ var db = require('./db');
 var slack = require('./slack');
 
 var j = schedule.scheduleJob('0 0 10 1 * *', function() {
-  db.query("update foodies set amount_due = amount_due + 100", function(err, result) {
+  db.query("update foodies set amount_due = amount_due + 150", function(err, result) {
     if(err) {
       console.log(err);
       return;
@@ -19,7 +19,7 @@ var j = schedule.scheduleJob('0 0 10 1 * *', function() {
     }
 
     for(var index in result) {
-      var message = 'Please pay an amount of Rs. 100 for this month. Your total due amount is Rs. ' + result[index].amount_due;
+      var message = 'Please pay an amount of Rs. 150 for this month. Your total due amount is Rs. ' + result[index].amount_due;
       var data = {
         from: 'Foodcache <donotreply@foodcache.com>',
         to: result[index].email,
@@ -32,7 +32,6 @@ var j = schedule.scheduleJob('0 0 10 1 * *', function() {
       });
 
       const channelID = result[index].channel;
-
       slack.chat.postMessage({channel: channelID, text: message})
         .then((res) => {
           console.log('Message sent: ', res);

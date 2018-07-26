@@ -12,6 +12,7 @@ var session = require('express-session');
 var api_key = process.env.mailgun_key;
 var domain = process.env.mailgun_domain;
 var mailgun = require('mailgun-js')({apiKey: api_key, domain: domain});
+var slack = require('./slack');
 
 app.use(cookieParser());
 app.use(session({secret: "secret"}));
@@ -94,15 +95,23 @@ app.post('/admin/users/details/update', function(req, res) {
     });
     db.query("select email from foodies where serial_no = ?", req.body.serial_no, function(err, result) {
       if(err) res.send(err);
+      var message = 'Received payment of Rs. ' + req.body.amount;
         var data = {
           from: 'Foodcache <donotreply@foodcache.com>',
           to: result[0].email,
           subject: 'Received payment',
-          text: 'Received payment of Rs. ' + req.body.amount
+          text: message
         };
         mailgun.messages().send(data, function (error, body) {
           console.log(error);
         });
+
+        const channelID = result[0].channel;
+        slack.chat.postMessage({channel: channelID, text: message})
+          .then((res) => {
+            console.log('Message sent: ', res);
+          })
+          .catch(console.error);
       res.render('');
     });
   }
@@ -141,15 +150,23 @@ app.post('/admin/items/purchase', function(req, res) {
     db.query("select email from foodies", function(err, result) {
       if(err) res.send(err);
       for(var email in result) {
+        var message = 'Food items purchased ' + formatItems(req.body.items) + '. Come and check.'
         var data = {
           from: 'Foodcache <donotreply@foodcache.com>',
           to: result[email].email,
           subject: 'New food items purchased',
-          text: 'Food items purchased ' + formatItems(req.body.items) + '. Come and check.'
+          text: message
         };
         mailgun.messages().send(data, function (error, body) {
           console.log(error);
         });
+
+        const channelID = result[email].channel;
+        slack.chat.postMessage({channel: channelID, text: message})
+          .then((res) => {
+            console.log('Message sent: ', res);
+          })
+          .catch(console.error);
       }
       res.render('');
     });
