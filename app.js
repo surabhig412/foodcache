@@ -93,7 +93,7 @@ app.post('/admin/users/details/update', function(req, res) {
     db.query("update foodies set amount_due = 0 where serial_no = ?", req.body.serial_no, function(err, result) {
       if(err) res.send(err);
     });
-    db.query("select email from foodies where serial_no = ?", req.body.serial_no, function(err, result) {
+    db.query("select * from foodies where serial_no = ?", req.body.serial_no, function(err, result) {
       if(err) res.send(err);
       var message = 'Received payment of Rs. ' + req.body.amount;
         var data = {
@@ -128,6 +128,39 @@ app.post('/admin/users/details/edit', function(req, res) {
   }
 });
 
+app.post('/admin/users/notify', function(req, res) {
+  if(checkAdminLoggedIn(req, res)) {
+    db.query("select * from foodies", function(err, result) {
+      if(err) {
+        res.send(err);
+      }
+      for(var index in result) {
+        if(result[index].amount_due != 0) {
+          var message = 'Please pay your dues for this month. Your total due amount is Rs. ' + result[index].amount_due;
+          var data = {
+            from: 'Foodcache <donotreply@foodcache.com>',
+            to: result[index].email,
+            subject: 'Gentle reminder to pay monthly dues.',
+            text: message
+          };
+
+          mailgun.messages().send(data, function (error, body) {
+            console.log(body);
+          });
+
+          const channelID = result[index].channel;
+          slack.chat.postMessage({channel: channelID, text: message})
+            .then((res) => {
+              console.log('Message sent: ', res);
+            })
+            .catch(console.error);
+        }
+      }
+      res.render('');
+    });
+  }
+});
+
 function formatItems(items) {
   var lastCommaIndex = items.lastIndexOf(",");
   if (lastCommaIndex !== -1) {
@@ -147,7 +180,7 @@ app.post('/admin/items/purchase', function(req, res) {
     db.query("update admin set amount_received = amount_received - ?", fooditem.amount, function(err, result) {
       if(err) res.send(err);
     });
-    db.query("select email from foodies", function(err, result) {
+    db.query("select * from foodies", function(err, result) {
       if(err) res.send(err);
       for(var email in result) {
         var message = 'Food items purchased ' + formatItems(req.body.items) + '. Come and check.'

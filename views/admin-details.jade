@@ -12,8 +12,12 @@ html
       include script.js
 
   body
-    a(href='#')#admin_logout.pull-right
-      span.glyphicon.glyphicon-log-out &nbsp;Logout
+    .row
+      .col-sm-10
+      .col-sm-2
+        button.btn.btn-primary.notify-btn(type='button', onclick='notifyBtnClicked()') Notify
+        a(href='#')#admin_logout.pull-right
+          span.glyphicon.glyphicon-log-out &nbsp;Logout
     h1 User Details
     table.table.table-bordered
       thead

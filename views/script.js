@@ -26,6 +26,19 @@ $(document).on('click', '#admin_logout', function(){
   });
 });
 
+function notifyBtnClicked() {
+  $.ajax({
+    url: '/admin/users/notify',
+    method: 'post',
+    success: function(data) {
+      window.location.reload();
+    },
+    error: function(data) {
+      console.log("error occurred " + data);
+    }
+  });
+}
+
 function paidBtnClicked(serial_no, amount) {
   $.ajax({
     url: '/admin/users/details/update',
