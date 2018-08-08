@@ -22,6 +22,8 @@ A simple application in nodeJS which keeps track of money paid and received for 
   * export mysql_host=`<your mysql host>`
   * export admin_user=`<application admin username>`
   * export admin_password=`<application admin password>`
+  * export admin_email=`<application admin email>`
+  * export admin_slack_channel=`<application admin slack channel ID>`
   * export slack_token=`<your slack token>`
 
 * npm install
