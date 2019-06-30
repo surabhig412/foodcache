@@ -1,16 +1,24 @@
 require("dotenv").config();
 
-var app = require("express")();
-var bodyParser = require("body-parser");
+const express = require("express");
+const bodyParser = require("body-parser");
+const cors = require("cors");
+const helmet = require("helmet");
+const cookieParser = require("cookie-parser");
+const session = require("express-session");
+const apiRoutes = require("./routes");
+
+const app = express();
+
 app.set("view engine", "jade");
-var cookieParser = require("cookie-parser");
-var session = require("express-session");
+app.set("port", process.env.PORT || 3000);
 
 app.use(cookieParser());
 app.use(session({ secret: "secret", }));
 app.use(bodyParser.urlencoded({ "extended": "true", }));
+app.use(cors());
+app.use(helmet());
 
-const apiRoutes = require("./routes");
 app.use("/", apiRoutes);
 
 app.use((req, res) => {
@@ -21,4 +29,5 @@ app.use((req, res) => {
     res.status(500).send("Sorry! Something broke!");
 });
 
-app.listen(3000);
+app.listen(app.get("port"));
+console.log(`App listening on ${app.get("port")}`);
