@@ -13,4 +13,12 @@ app.use(bodyParser.urlencoded({ "extended": "true", }));
 const apiRoutes = require("./routes");
 app.use("/", apiRoutes);
 
+app.use((req, res) => {
+    res.status(404).send("Sorry not found! 404!");
+});
+
+app.use((req, res) => {
+    res.status(500).send("Sorry! Something broke!");
+});
+
 app.listen(3000);
