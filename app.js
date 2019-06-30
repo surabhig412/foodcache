@@ -153,7 +153,11 @@ app.post("/admin/users/notify", function (req, res) {
                     };
 
                     mailgun.messages().send(data, function (error, body) {
-                        console.log(body);
+                        if (error) {
+                            console.log(error);
+                        } else {
+                            console.log(body);
+                        }
                     });
 
                     const channelID = result[index].channel;
