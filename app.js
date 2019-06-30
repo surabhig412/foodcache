@@ -143,7 +143,7 @@ app.post("/admin/users/notify", function (req, res) {
                 res.send(err);
             }
             for (var index in result) {
-                if (result[index].amount_due != 0) {
+                if (result[index].amount_due !== 0) {
                     var message = "Please pay your dues for this month. Your total due amount is Rs. " + result[index].amount_due;
                     var data = {
                         from: "Foodcache <donotreply@foodcache.com>",
