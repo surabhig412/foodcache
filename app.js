@@ -2,6 +2,7 @@ var app = require('express')();
 var path = require('path');
 var bodyParser = require('body-parser');
 app.set("view engine","jade");
+require('dotenv').config();
 var db = require('./db');
 var schedule = require('./scheduler');
 var gapi = require('./gapi');

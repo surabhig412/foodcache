@@ -11,20 +11,24 @@ A simple application in nodeJS which keeps track of money paid and received for 
 
 # Steps to run the application
 
-* Set the following environment variables:
-  * export google_client_id=`<give your google clientID>`
-  * export google_client_secret=`<give your google client secret>`
-  * export google_redirect_url=`<give your oauth redirect url for google>`
-  * export mailgun_key=`<your mailgun api key>`
-  * export mailgun_domain=`<your mailgun domain>`
-  * export mysql_user=`<your mysql user>`
-  * export mysql_password=`<your mysql password>`
-  * export mysql_host=`<your mysql host>`
-  * export admin_user=`<application admin username>`
-  * export admin_password=`<application admin password>`
-  * export admin_email=`<application admin email>`
-  * export admin_slack_channel=`<application admin slack channel ID>`
-  * export slack_token=`<your slack token>`
+* Create a `.env` file at the project root with the following:
+```
+google_client_id=<give your google clientID>
+google_client_secret=<give your google client secret>
+google_redirect_url=<your domain name>/redirect
+mailgun_key=<your mailgun api key>
+mailgun_domain=<your mailgun domain>
+mysql_user=<your mysql user>
+mysql_password=<your mysql password>
+mysql_host=<your mysql host>
+admin_user=<application admin username>
+admin_password=<application admin password>
+admin_email=<application admin email>
+admin_slack_channel=<application admin slack channel ID>
+slack_token=<your slack token>
+```
+
+You can manually export the environment variables also.
 
 * npm install
 
