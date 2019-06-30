@@ -1,7 +1,7 @@
 {
   "name": "foodcache",
-  "version": "0.0.1",
-  "description": "Simple application to keep track of money paid for office food items",
+  "version": "2.0.0",
+  "description": "Office Pantry Management",
   "private": true,
   "main": "app.js",
   "author": "Surabhi",
