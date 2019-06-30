@@ -72,23 +72,23 @@ app.post("/admin-login", function (req, res) {
 
 app.get("/admin/details", function (req, res) {
     if (checkAdminLoggedIn(req, res)) {
-        var foodies_result, fooditems_result, foodstock_result;
+        var foodiesResult, fooditemsResult, foodstockResult;
         db.query("select * from foodies", function (err, result) {
             if (err) res.send(err);
-            foodies_result = JSON.stringify(result);
+            foodiesResult = JSON.stringify(result);
         });
         db.query("select * from fooditems", function (err, result) {
             if (err) res.send(err);
-            fooditems_result = JSON.stringify(result);
+            fooditemsResult = JSON.stringify(result);
         });
         db.query("select * from foodstock", function (err, result) {
             if (err) res.send(err);
-            foodstock_result = JSON.stringify(result);
+            foodstockResult = JSON.stringify(result);
         });
         db.query("select amount_received from admin", function (err, result) {
             if (err) res.send(err);
-            var admin_result = JSON.stringify(result);
-            res.render("admin-details.jade", { foodies: JSON.parse(foodies_result), admin_details: JSON.parse(admin_result), fooditems: JSON.parse(fooditems_result), foodstock: JSON.parse(foodstock_result), });
+            var adminResult = JSON.stringify(result);
+            res.render("admin-details.jade", { foodies: JSON.parse(foodiesResult), admin_details: JSON.parse(adminResult), fooditems: JSON.parse(fooditemsResult), foodstock: JSON.parse(foodstockResult), });
         });
     }
 });
@@ -127,7 +127,7 @@ app.post("/admin/users/details/update", function (req, res) {
 
 app.post("/admin/users/details/edit", function (req, res) {
     if (checkAdminLoggedIn(req, res)) {
-        db.query("update foodies set amount_due = ? where serial_no = ?", [req.body.amount, req.body.serial_no, ], function (err, result) {
+        db.query("update foodies set amount_due = ? where serial_no = ?", [ req.body.amount, req.body.serial_no, ], function (err, result) {
             if (err) {
                 res.send(err);
             }
@@ -216,8 +216,8 @@ app.post("/admin/items/purchase", function (req, res) {
 
 app.post("/admin/foodstock/add", function (req, res) {
     if (checkAdminLoggedIn(req, res)) {
-        var foodstock_item = { fooditem: req.body.fooditem, };
-        db.query("insert into foodstock set ?", foodstock_item, function (err, result) {
+        var foodstockItem = { fooditem: req.body.fooditem, };
+        db.query("insert into foodstock set ?", foodstockItem, function (err, result) {
             if (err) {
                 res.send(err);
             }
