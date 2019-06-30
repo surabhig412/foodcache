@@ -4,6 +4,7 @@ const express = require("express");
 const bodyParser = require("body-parser");
 const cors = require("cors");
 const helmet = require("helmet");
+const logger = require("morgan");
 const cookieParser = require("cookie-parser");
 const session = require("express-session");
 const apiRoutes = require("./routes");
@@ -13,6 +14,7 @@ const app = express();
 app.set("view engine", "jade");
 app.set("port", process.env.PORT || 3000);
 
+app.use(logger("short"));
 app.use(cookieParser());
 app.use(session({ secret: "secret", }));
 app.use(bodyParser.urlencoded({ "extended": "true", }));
