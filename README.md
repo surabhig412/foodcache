@@ -1,9 +1,9 @@
 # foodcache
-A simple application in nodeJS which keeps track of money paid and received for a pantry. It also gives monthly email alerts to all its users. The admin of this application can handle accounts and can view which users still owe money.
+Application to keep track of money paid and received for office pantry. It gives monthly email alerts to all its users. The admin of this application can handle accounts and can view which users still owe money.
 
 # Prerequisites
 
-* Mysql database
+* Mysql
 
 * Mailgun key credentials
 
@@ -30,6 +30,17 @@ slack_token=<your slack token>
 
 You can manually export the environment variables also.
 
-* npm install
+* Install the dependencies
+```
+npm install
+```
 
-* npm start
+* Create database and required tables
+```
+npm run prestart
+```
+
+* Start the application
+```
+npm start
+```
