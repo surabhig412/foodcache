@@ -1,12 +1,12 @@
 var schedule = require("node-schedule");
-var api_key = process.env.mailgun_key;
+var mailgunKey = process.env.mailgun_key;
 var domain = process.env.mailgun_domain;
-var mailgun = require("mailgun-js")({ apiKey: api_key, domain: domain, });
+var mailgun = require("mailgun-js")({ apiKey: mailgunKey, domain: domain, });
 var db = require("./db");
 var slack = require("./slack");
 
 var j = schedule.scheduleJob("0 0 10 1 * *", function () {
-    var foodies_result = "";
+    var foodiesResult = "";
     db.query("update foodies set amount_due = amount_due + 150", function (err, result) {
         if (err) {
             console.log(err);
@@ -19,7 +19,7 @@ var j = schedule.scheduleJob("0 0 10 1 * *", function () {
         }
 
         for (var index in result) {
-            foodies_result += result[index].full_name + ": Rs. " + result[index].amount_due + "\n";
+            foodiesResult += result[index].full_name + ": Rs. " + result[index].amount_due + "\n";
             var message = "Please pay an amount of Rs. 150 for this month. Your total due amount is Rs. " + result[index].amount_due;
             var data = {
                 from: "Foodcache <donotreply@foodcache.com>",
@@ -29,7 +29,9 @@ var j = schedule.scheduleJob("0 0 10 1 * *", function () {
             };
 
             mailgun.messages().send(data, function (error, body) {
-                console.log(body);
+                if (!error) {
+                    console.log(body);
+                }
             });
 
             const channelID = result[index].channel;
@@ -46,21 +48,23 @@ var j = schedule.scheduleJob("0 0 10 1 * *", function () {
             console.log(err);
             return;
         }
-        foodies_result += "Balance Amount: Rs. " + result[0].amount_received;
+        foodiesResult += "Balance Amount: Rs. " + result[0].amount_received;
 
         var data = {
             from: "Foodcache <donotreply@foodcache.com>",
             to: result[0].email,
             subject: "Foodcache details",
-            text: foodies_result,
+            text: foodiesResult,
         };
 
         mailgun.messages().send(data, function (error, body) {
-            console.log(body);
+            if (!error) {
+                console.log(body);
+            }
         });
 
         const channelID = result[0].channel;
-        slack.chat.postMessage({ channel: channelID, text: foodies_result, })
+        slack.chat.postMessage({ channel: channelID, text: foodiesResult, })
             .then((res) => {
                 console.log("Message sent: ", res);
             })
