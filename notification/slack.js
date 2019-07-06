@@ -1,6 +1,5 @@
 const { WebClient, } = require("@slack/client");
 
-// TODO test
 class SlackClient {
     constructor () {
         this.client = new WebClient(process.env.slack_token);

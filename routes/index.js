@@ -7,10 +7,7 @@ const plus = googleapis.plus("v1");
 var db = require("../db");
 var { FoodStock, FoodItem, } = require("../models");
 
-const email = require("../email");
-
-const SlackClient = require("../slack");
-const slack = new SlackClient();
+const notify = require("../notification");
 
 const router = new Router();
 
@@ -106,11 +103,7 @@ router.post("/admin/users/details/update", function (req, res) {
         });
         db.query("select * from foodies where serial_no = ?", req.body.serial_no, function (err, result) {
             if (err) res.send(err);
-
-            const message = "Received payment of Rs. " + req.body.amount;
-            email.notifyPaymentReceived(result[0].email, message);
-            slack.notify(result[0].channel, message);
-
+            notify.paymentReceived(result[0].email, result[0].channel, req.body.amount);
             res.render("");
         });
     }
@@ -133,27 +126,15 @@ router.post("/admin/users/notify", function (req, res) {
             if (err) {
                 res.send(err);
             }
-            for (var index in result) {
-                if (result[index].amount_due !== 0) {
-                    var message = "Please pay your dues for this month. Your total due amount is Rs. " + result[index].amount_due;
-                    email.notifyPaymentDue(result[index].email, message);
-                    slack.notify(result[index].channel, message);
+            for (let foodie of result) {
+                if (foodie.amount_due !== 0) {
+                    notify.paymentDue(foodie.email, foodie.channel, foodie.amount_due);
                 }
             }
             res.render("");
         });
     }
 });
-
-function formatItems (items) {
-    var lastCommaIndex = items.lastIndexOf(",");
-    if (lastCommaIndex !== -1) {
-        items = "are " + items.substr(0, lastCommaIndex) + " and " + items.substr(lastCommaIndex + 1, items.length);
-        return items.toLowerCase();
-    } else {
-        return "is " + items.toLowerCase();
-    }
-}
 
 router.post("/admin/items/purchase", function (req, res) {
     if (checkAdminLoggedIn(req, res)) {
@@ -168,10 +149,8 @@ router.post("/admin/items/purchase", function (req, res) {
         });
         db.query("select * from foodies", function (err, result) {
             if (err) res.send(err);
-            for (var foodie in result) {
-                var message = "Food items purchased " + formatItems(req.body.items) + ". Come and check.";
-                email.notifyItemPurchase(foodie.email, message);
-                slack.notify(foodie.channel, message);
+            for (var foodie of result) {
+                notify.itemPurchase(foodie.email, foodie.channel, req.body.items);
             }
             res.render("");
         });
