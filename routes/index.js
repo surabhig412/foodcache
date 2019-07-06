@@ -7,11 +7,9 @@ const plus = googleapis.plus("v1");
 var db = require("../db");
 var { FoodStock, FoodItem, } = require("../models");
 
-var apiKey = process.env.mailgun_key;
-var domain = process.env.mailgun_domain;
-var mailgun = require("mailgun-js")({ apiKey: apiKey, domain: domain, });
+const email = require("../email");
 
-var SlackClient = require("../slack");
+const SlackClient = require("../slack");
 const slack = new SlackClient();
 
 const router = new Router();
@@ -108,17 +106,9 @@ router.post("/admin/users/details/update", function (req, res) {
         });
         db.query("select * from foodies where serial_no = ?", req.body.serial_no, function (err, result) {
             if (err) res.send(err);
-            var message = "Received payment of Rs. " + req.body.amount;
-            var data = {
-                from: "Foodcache <donotreply@foodcache.com>",
-                to: result[0].email,
-                subject: "Received payment",
-                text: message,
-            };
-            mailgun.messages().send(data, function (error, body) {
-                console.log(error);
-            });
 
+            const message = "Received payment of Rs. " + req.body.amount;
+            email.notifyPaymentReceived(result[0].email, message);
             slack.notify(result[0].channel, message);
 
             res.render("");
@@ -146,21 +136,7 @@ router.post("/admin/users/notify", function (req, res) {
             for (var index in result) {
                 if (result[index].amount_due !== 0) {
                     var message = "Please pay your dues for this month. Your total due amount is Rs. " + result[index].amount_due;
-                    var data = {
-                        from: "Foodcache <donotreply@foodcache.com>",
-                        to: result[index].email,
-                        subject: "Gentle reminder to pay monthly dues.",
-                        text: message,
-                    };
-
-                    mailgun.messages().send(data, function (error, body) {
-                        if (error) {
-                            console.log(error);
-                        } else {
-                            console.log(body);
-                        }
-                    });
-
+                    email.notifyPaymentDue(result[index].email, message);
                     slack.notify(result[index].channel, message);
                 }
             }
@@ -192,19 +168,10 @@ router.post("/admin/items/purchase", function (req, res) {
         });
         db.query("select * from foodies", function (err, result) {
             if (err) res.send(err);
-            for (var email in result) {
+            for (var foodie in result) {
                 var message = "Food items purchased " + formatItems(req.body.items) + ". Come and check.";
-                var data = {
-                    from: "Foodcache <donotreply@foodcache.com>",
-                    to: result[email].email,
-                    subject: "New food items purchased",
-                    text: message,
-                };
-                mailgun.messages().send(data, function (error, body) {
-                    console.log(error);
-                });
-
-                slack.notify(result[email].channel, message);
+                email.notifyItemPurchase(foodie.email, message);
+                slack.notify(foodie.channel, message);
             }
             res.render("");
         });
