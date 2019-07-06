@@ -6,6 +6,23 @@ var db = require("../db");
 
 const notify = require("../notification");
 
+router.post("/login", function (req, res) {
+    db.query("select * from admin", function (err, result) {
+        if (err) res.send(err);
+        if (result[0].username !== req.body.username || result[0].password !== req.body.password) {
+            res.redirect("/");
+            return;
+        }
+        req.session.admin_login = true;
+        res.redirect("/admin/details");
+    });
+});
+
+router.post("/logout", function (req, res) {
+    req.session.admin_login = false;
+    res.render("");
+});
+
 const checkAdminLoggedIn = function (req, res, next) {
     if (!req.session.admin_login) {
         res.redirect("/");
