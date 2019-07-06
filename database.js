@@ -6,7 +6,7 @@ class Database {
         this.sql = new Sequelize("foodcache", process.env.mysql_user, process.env.mysql_password, {
             host: process.env.mysql_host,
             dialect: "mysql",
-            logging: console.log,
+            // logging: console.log,
         });
 
         this.sql.authenticate()
