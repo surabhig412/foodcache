@@ -21,6 +21,7 @@ class Database {
 
     init (sql) {
         this.FoodStock = models.FoodStock.init(sql);
+        this.FoodItem = models.FoodItem.init(sql);
     }
 }
 

@@ -1,7 +1,9 @@
-const FoodStock = require("./foodstock");
+const foodStock = require("./foodstock");
+const foodItem = require("./fooditem");
 
 const models = {
-    FoodStock: FoodStock,
+    FoodStock: foodStock,
+    FoodItem: foodItem,
 };
 
 module.exports = models;
