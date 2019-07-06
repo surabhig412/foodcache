@@ -15,33 +15,29 @@ const checkAdminLoggedIn = function (req, res, next) {
 
 router.use(checkAdminLoggedIn);
 
-router.get("/details", function (req, res) {
-    var foodiesResult, fooditemsResult, foodstockResult, adminResult;
+// below routers are using checkAdminLoggedIn
+
+router.get("/details", async function (req, res) {
+    var foodiesResult;
     db.query("select * from foodies", function (err, result) {
         if (err) res.send(err);
         foodiesResult = JSON.stringify(result);
     });
 
-    FoodItem.findAll()
-        .then(foodItems => {
-            fooditemsResult = JSON.stringify(foodItems);
-        })
-        .then(() => {
-            return FoodStock.findAll();
-        })
-        .then(foodstock => {
-            foodstockResult = JSON.stringify(foodstock);
-        })
-        .then(() => {
-            return Admin.findAll({ attributes: [ "amount_received", ], limit: 1, });
-        })
-        .then(result => {
-            adminResult = JSON.stringify(result);
-            res.render("admin-details.jade", { foodies: JSON.parse(foodiesResult), admin_details: JSON.parse(adminResult), fooditems: JSON.parse(fooditemsResult), foodstock: JSON.parse(foodstockResult), });
-        })
-        .catch(err => {
-            res.send(err);
-        });
+    try {
+        const foodItems = await FoodItem.findAll();
+        const fooditemsResult = JSON.stringify(foodItems);
+
+        const foodstock = await FoodStock.findAll();
+        const foodstockResult = JSON.stringify(foodstock);
+
+        const result = await Admin.findAll({ attributes: [ "amount_received", ], limit: 1, });
+        const adminResult = JSON.stringify(result);
+
+        res.render("admin-details.jade", { foodies: JSON.parse(foodiesResult), admin_details: JSON.parse(adminResult), fooditems: JSON.parse(fooditemsResult), foodstock: JSON.parse(foodstockResult), });
+    } catch (err) {
+        res.send(err);
+    }
 });
 
 router.post("/users/details/update", async function (req, res) {
