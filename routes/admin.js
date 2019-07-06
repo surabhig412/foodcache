@@ -1,7 +1,7 @@
 const Router = require("express").Router;
 const router = new Router();
 
-const { FoodStock, FoodItem, Admin, } = require("../models");
+const { Admin, FoodItem, Foodie, FoodStock, } = require("../models");
 var db = require("../db");
 
 const notify = require("../notification");
@@ -38,13 +38,10 @@ router.use(checkAdminLoggedIn);
 // below routers are using checkAdminLoggedIn
 
 router.get("/details", async function (req, res) {
-    var foodiesResult;
-    db.query("select * from foodies", function (err, result) {
-        if (err) res.send(err);
-        foodiesResult = JSON.stringify(result);
-    });
-
     try {
+        var foodiesResult = await Foodie.findAll();
+        foodiesResult = JSON.stringify(foodiesResult);
+
         const foodItems = await FoodItem.findAll();
         const fooditemsResult = JSON.stringify(foodItems);
 

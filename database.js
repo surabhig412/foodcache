@@ -1,5 +1,5 @@
 const Sequelize = require("sequelize");
-const { FoodStock, FoodItem, Admin, } = require("./models");
+const { Admin, FoodItem, Foodie, FoodStock, } = require("./models");
 
 class Database {
     constructor () {
@@ -20,9 +20,10 @@ class Database {
     }
 
     init (sql) {
-        this.FoodStock = FoodStock.init(sql);
-        this.FoodItem = FoodItem.init(sql);
         this.Admin = Admin.init(sql);
+        this.FoodItem = FoodItem.init(sql);
+        this.Foodie = Foodie.init(sql);
+        this.FoodStock = FoodStock.init(sql);
     }
 }
 
