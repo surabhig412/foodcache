@@ -10,7 +10,8 @@ var models = require("../models");
 var apiKey = process.env.mailgun_key;
 var domain = process.env.mailgun_domain;
 var mailgun = require("mailgun-js")({ apiKey: apiKey, domain: domain, });
-var slack = require("../slack");
+var SlackClient = require("../slack");
+const slack = new SlackClient();
 
 const router = new Router();
 
@@ -111,12 +112,8 @@ router.post("/admin/users/details/update", function (req, res) {
                 console.log(error);
             });
 
-            const channelID = result[0].channel;
-            slack.chat.postMessage({ channel: channelID, text: message, })
-                .then((res) => {
-                    console.log("Message sent: ", res);
-                })
-                .catch(console.error);
+            slack.notify(result[0].channel, message);
+
             res.render("");
         });
     }
@@ -157,12 +154,7 @@ router.post("/admin/users/notify", function (req, res) {
                         }
                     });
 
-                    const channelID = result[index].channel;
-                    slack.chat.postMessage({ channel: channelID, text: message, })
-                        .then((res) => {
-                            console.log("Message sent: ", res);
-                        })
-                        .catch(console.error);
+                    slack.notify(result[index].channel, message);
                 }
             }
             res.render("");
@@ -203,12 +195,7 @@ router.post("/admin/items/purchase", function (req, res) {
                     console.log(error);
                 });
 
-                const channelID = result[email].channel;
-                slack.chat.postMessage({ channel: channelID, text: message, })
-                    .then((res) => {
-                        console.log("Message sent: ", res);
-                    })
-                    .catch(console.error);
+                slack.notify(result[email].channel, message);
             }
             res.render("");
         });
