@@ -7,6 +7,7 @@ const helmet = require("helmet");
 const logger = require("morgan");
 const cookieParser = require("cookie-parser");
 const session = require("express-session");
+const Database = require("./database");
 const apiRoutes = require("./routes");
 
 const app = express();
@@ -20,6 +21,8 @@ app.use(session({ secret: "secret", }));
 app.use(bodyParser.urlencoded({ "extended": "true", }));
 app.use(cors());
 app.use(helmet());
+
+const database = new Database();
 
 app.use("/", apiRoutes);
 
