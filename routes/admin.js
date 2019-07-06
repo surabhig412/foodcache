@@ -6,16 +6,19 @@ var db = require("../db");
 
 const notify = require("../notification");
 
-router.post("/login", function (req, res) {
-    db.query("select * from admin", function (err, result) {
-        if (err) res.send(err);
-        if (result[0].username !== req.body.username || result[0].password !== req.body.password) {
+router.post("/login", async function (req, res) {
+    try {
+        const admin = await Admin.findOne();
+        if (admin.username !== req.body.username || admin.password !== req.body.password) {
             res.redirect("/");
             return;
         }
+
         req.session.admin_login = true;
         res.redirect("/admin/details");
-    });
+    } catch (err) {
+        res.send(err);
+    }
 });
 
 router.post("/logout", function (req, res) {
@@ -58,7 +61,7 @@ router.get("/details", async function (req, res) {
 });
 
 router.post("/users/details/update", async function (req, res) {
-    const admin = await Admin.findOne({ limit: 1, });
+    const admin = await Admin.findOne();
     admin.increment("amount_received", { by: req.body.amount, });
 
     db.query("update foodies set amount_due = 0 where serial_no = ?", req.body.serial_no, function (err, result) {
@@ -100,7 +103,7 @@ router.post("/items/purchase", function (req, res) {
     FoodItem.create(fooditem)
         .then(async () => {
             const admin = await Admin.findOne({ limit: 1, });
-            admin.decrement("amount_received", { by: fooditem.amount, });
+            return admin.decrement("amount_received", { by: fooditem.amount, });
         })
         .then(() => {
             db.query("select * from foodies", function (err, result) {
