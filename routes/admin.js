@@ -67,6 +67,7 @@ router.post("/users/details/update", async function (req, res) {
         await foodie.save();
 
         notify.paymentReceived(foodie.email, foodie.channel, req.body.amount);
+
         res.render("");
     } catch (err) {
         console.log(err);
@@ -74,9 +75,10 @@ router.post("/users/details/update", async function (req, res) {
     }
 });
 
-router.post("/users/details/edit", function (req, res) {
+router.post("/users/details/edit", async function (req, res) {
     try {
-        Foodie.update({ amount_due: req.body.amount, }, { where: { serial_no: req.body.serial_no, }, });
+        await Foodie.update({ amount_due: req.body.amount, }, { where: { serial_no: req.body.serial_no, }, });
+
         res.render("");
     } catch (err) {
         res.send(err);
@@ -91,6 +93,7 @@ router.post("/users/notify", async function (req, res) {
                 notify.paymentDue(foodie.email, foodie.channel, foodie.amount_due);
             }
         }
+
         res.render("");
     } catch (err) {
         console.log(err);
@@ -98,50 +101,49 @@ router.post("/users/notify", async function (req, res) {
     }
 });
 
-router.post("/items/purchase", function (req, res) {
-    var fooditem = { items: req.body.items, description: req.body.description, amount: req.body.amount, };
+router.post("/items/purchase", async function (req, res) {
+    try {
+        var fooditem = { items: req.body.items, description: req.body.description, amount: req.body.amount, };
 
-    FoodItem.create(fooditem)
-        .then(async () => {
-            const admin = await Admin.findOne();
-            admin.decrement("amount_received", { by: fooditem.amount, });
+        FoodItem.create(fooditem);
 
-            const foodies = await Foodie.findAll();
-            for (var foodie of foodies) {
-                notify.itemPurchase(foodie.email, foodie.channel, req.body.items);
-            }
-            res.render("");
-        })
-        .catch(err => {
-            console.log(err);
-            res.send(err);
-        });
+        const admin = await Admin.findOne();
+        admin.decrement("amount_received", { by: fooditem.amount, });
+
+        const foodies = await Foodie.findAll();
+        for (var foodie of foodies) {
+            notify.itemPurchase(foodie.email, foodie.channel, req.body.items);
+        }
+
+        res.render("");
+    } catch (err) {
+        console.log(err);
+        res.send(err);
+    };
 });
 
 router.post("/foodstock/add", async function (req, res) {
-    const foodstockItem = { fooditem: req.body.fooditem, };
+    try {
+        const foodstockItem = { fooditem: req.body.fooditem, };
+        await FoodStock.create(foodstockItem);
 
-    FoodStock.create(foodstockItem)
-        .then(() => {
-            res.render("");
-        })
-        .catch(err => {
-            console.log(err);
-            res.send(err);
-        });
+        res.render("");
+    } catch (err) {
+        console.log(err);
+        res.send(err);
+    };
 });
 
 router.post("/foodstock/delete", async function (req, res) {
-    const itemID = { id: req.body.id, };
+    try {
+        const itemID = { id: req.body.id, };
+        await FoodStock.destroy({ where: itemID, });
 
-    FoodStock.destroy({ where: itemID, })
-        .then(() => {
-            res.render("");
-        })
-        .catch(err => {
-            console.log(err);
-            res.send(err);
-        });
+        res.render("");
+    } catch (err) {
+        console.log(err);
+        res.send(err);
+    }
 });
 
 module.exports = router;
