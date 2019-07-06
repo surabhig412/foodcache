@@ -7,18 +7,23 @@ class Admin extends Sequelize.Model {
             {
                 username: {
                     type: Sequelize.STRING,
+                    primaryKey: true,
                 },
                 password: {
                     type: Sequelize.STRING,
+                    primaryKey: true,
                 },
                 amount_received: {
                     type: Sequelize.DECIMAL(15, 2),
+                    primaryKey: true,
                 },
                 email: {
                     type: Sequelize.STRING,
+                    primaryKey: true,
                 },
                 channel: {
                     type: Sequelize.STRING,
+                    primaryKey: true,
                 },
             },
             // options
