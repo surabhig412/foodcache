@@ -5,11 +5,12 @@ const googleapis = require("googleapis");
 const plus = googleapis.plus("v1");
 
 var db = require("../db");
-var models = require("../models");
+var { FoodStock, FoodItem, } = require("../models");
 
 var apiKey = process.env.mailgun_key;
 var domain = process.env.mailgun_domain;
 var mailgun = require("mailgun-js")({ apiKey: apiKey, domain: domain, });
+
 var SlackClient = require("../slack");
 const slack = new SlackClient();
 
@@ -73,11 +74,14 @@ router.get("/admin/details", function (req, res) {
             if (err) res.send(err);
             foodiesResult = JSON.stringify(result);
         });
-        db.query("select * from fooditems", function (err, result) {
-            if (err) res.send(err);
-            fooditemsResult = JSON.stringify(result);
-        });
-        models.FoodStock.findAll()
+
+        FoodItem.findAll()
+            .then(foodItems => {
+                fooditemsResult = JSON.stringify(foodItems);
+            })
+            .then(() => {
+                return FoodStock.findAll();
+            })
             .then(foodstock => {
                 foodstockResult = JSON.stringify(foodstock);
             })
@@ -87,6 +91,9 @@ router.get("/admin/details", function (req, res) {
                     var adminResult = JSON.stringify(result);
                     res.render("admin-details.jade", { foodies: JSON.parse(foodiesResult), admin_details: JSON.parse(adminResult), fooditems: JSON.parse(fooditemsResult), foodstock: JSON.parse(foodstockResult), });
                 });
+            })
+            .catch(err => {
+                res.send(err);
             });
     }
 });
@@ -174,10 +181,12 @@ function formatItems (items) {
 
 router.post("/admin/items/purchase", function (req, res) {
     if (checkAdminLoggedIn(req, res)) {
-        var fooditem = { amount: req.body.amount, description: req.body.description, items: req.body.items, };
-        db.query("insert into fooditems set ?", fooditem, function (err, result) {
-            if (err) res.send(err);
-        });
+        var fooditem = { items: req.body.items, description: req.body.description, amount: req.body.amount, };
+
+        FoodItem.create(fooditem)
+            .catch(err => {
+                res.send(err);
+            });
         db.query("update admin set amount_received = amount_received - ?", fooditem.amount, function (err, result) {
             if (err) res.send(err);
         });
@@ -206,7 +215,7 @@ router.post("/admin/foodstock/add", async function (req, res) {
     if (checkAdminLoggedIn(req, res)) {
         const foodstockItem = { fooditem: req.body.fooditem, };
 
-        models.FoodStock.create(foodstockItem)
+        FoodStock.create(foodstockItem)
             .then(() => {
                 res.render("");
             })
@@ -221,7 +230,7 @@ router.post("/admin/foodstock/delete", async function (req, res) {
     if (checkAdminLoggedIn(req, res)) {
         const itemID = { id: req.body.id, };
 
-        models.FoodStock.destroy({ where: itemID, })
+        FoodStock.destroy({ where: itemID, })
             .then(() => {
                 res.render("");
             })
