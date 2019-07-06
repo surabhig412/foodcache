@@ -5,6 +5,7 @@ const googleapis = require("googleapis");
 const plus = googleapis.plus("v1");
 
 var db = require("../db");
+var models = require("../models");
 
 var apiKey = process.env.mailgun_key;
 var domain = process.env.mailgun_domain;
@@ -212,26 +213,33 @@ router.post("/admin/items/purchase", function (req, res) {
     }
 });
 
-router.post("/admin/foodstock/add", function (req, res) {
+router.post("/admin/foodstock/add", async function (req, res) {
     if (checkAdminLoggedIn(req, res)) {
-        var foodstockItem = { fooditem: req.body.fooditem, };
-        db.query("insert into foodstock set ?", foodstockItem, function (err, result) {
-            if (err) {
+        const foodstockItem = { fooditem: req.body.fooditem, };
+
+        models.FoodStock.create(foodstockItem)
+            .then(() => {
+                res.render("");
+            })
+            .catch(err => {
+                console.log(err);
                 res.send(err);
-            }
-            res.render("");
-        });
+            });
     }
 });
 
-router.post("/admin/foodstock/delete", function (req, res) {
+router.post("/admin/foodstock/delete", async function (req, res) {
     if (checkAdminLoggedIn(req, res)) {
-        db.query("delete from foodstock where id= ?", req.body.id, function (err, result) {
-            if (err) {
+        const itemID = { id: req.body.id, };
+
+        models.FoodStock.destroy({ where: itemID, })
+            .then(() => {
+                res.render("");
+            })
+            .catch(err => {
+                console.log(err);
                 res.send(err);
-            }
-            res.render("");
-        });
+            });
     }
 });
 
