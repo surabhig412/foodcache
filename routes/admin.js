@@ -1,12 +1,12 @@
 const Router = require("express").Router;
 const router = new Router();
 
-var { FoodStock, FoodItem, } = require("../models");
+const { FoodStock, FoodItem, Admin, } = require("../models");
 var db = require("../db");
 
 const notify = require("../notification");
 
-var checkAdminLoggedIn = function (req, res, next) {
+const checkAdminLoggedIn = function (req, res, next) {
     if (!req.session.admin_login) {
         res.redirect("/");
     }
@@ -16,7 +16,7 @@ var checkAdminLoggedIn = function (req, res, next) {
 router.use(checkAdminLoggedIn);
 
 router.get("/details", function (req, res) {
-    var foodiesResult, fooditemsResult, foodstockResult;
+    var foodiesResult, fooditemsResult, foodstockResult, adminResult;
     db.query("select * from foodies", function (err, result) {
         if (err) res.send(err);
         foodiesResult = JSON.stringify(result);
@@ -33,21 +33,21 @@ router.get("/details", function (req, res) {
             foodstockResult = JSON.stringify(foodstock);
         })
         .then(() => {
-            db.query("select amount_received from admin", function (err, result) {
-                if (err) res.send(err);
-                var adminResult = JSON.stringify(result);
-                res.render("admin-details.jade", { foodies: JSON.parse(foodiesResult), admin_details: JSON.parse(adminResult), fooditems: JSON.parse(fooditemsResult), foodstock: JSON.parse(foodstockResult), });
-            });
+            return Admin.findAll({ attributes: [ "amount_received", ], limit: 1, });
+        })
+        .then(result => {
+            adminResult = JSON.stringify(result);
+            res.render("admin-details.jade", { foodies: JSON.parse(foodiesResult), admin_details: JSON.parse(adminResult), fooditems: JSON.parse(fooditemsResult), foodstock: JSON.parse(foodstockResult), });
         })
         .catch(err => {
             res.send(err);
         });
 });
 
-router.post("/users/details/update", function (req, res) {
-    db.query("update admin set amount_received = amount_received + ?", req.body.amount, function (err, result) {
-        if (err) res.send(err);
-    });
+router.post("/users/details/update", async function (req, res) {
+    const admin = await Admin.findOne({ limit: 1, });
+    admin.increment("amount_received", { by: req.body.amount, });
+
     db.query("update foodies set amount_due = 0 where serial_no = ?", req.body.serial_no, function (err, result) {
         if (err) res.send(err);
     });
@@ -85,19 +85,23 @@ router.post("/items/purchase", function (req, res) {
     var fooditem = { items: req.body.items, description: req.body.description, amount: req.body.amount, };
 
     FoodItem.create(fooditem)
+        .then(async () => {
+            const admin = await Admin.findOne({ limit: 1, });
+            admin.decrement("amount_received", { by: fooditem.amount, });
+        })
+        .then(() => {
+            db.query("select * from foodies", function (err, result) {
+                if (err) res.send(err);
+                for (var foodie of result) {
+                    notify.itemPurchase(foodie.email, foodie.channel, req.body.items);
+                }
+                res.render("");
+            });
+        })
         .catch(err => {
+            console.log(err);
             res.send(err);
         });
-    db.query("update admin set amount_received = amount_received - ?", fooditem.amount, function (err, result) {
-        if (err) res.send(err);
-    });
-    db.query("select * from foodies", function (err, result) {
-        if (err) res.send(err);
-        for (var foodie of result) {
-            notify.itemPurchase(foodie.email, foodie.channel, req.body.items);
-        }
-        res.render("");
-    });
 });
 
 router.post("/foodstock/add", async function (req, res) {
