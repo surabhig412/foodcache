@@ -76,15 +76,17 @@ router.get("/admin/details", function (req, res) {
             if (err) res.send(err);
             fooditemsResult = JSON.stringify(result);
         });
-        db.query("select * from foodstock", function (err, result) {
-            if (err) res.send(err);
-            foodstockResult = JSON.stringify(result);
-        });
-        db.query("select amount_received from admin", function (err, result) {
-            if (err) res.send(err);
-            var adminResult = JSON.stringify(result);
-            res.render("admin-details.jade", { foodies: JSON.parse(foodiesResult), admin_details: JSON.parse(adminResult), fooditems: JSON.parse(fooditemsResult), foodstock: JSON.parse(foodstockResult), });
-        });
+        models.FoodStock.findAll()
+            .then(foodstock => {
+                foodstockResult = JSON.stringify(foodstock);
+            })
+            .then(() => {
+                db.query("select amount_received from admin", function (err, result) {
+                    if (err) res.send(err);
+                    var adminResult = JSON.stringify(result);
+                    res.render("admin-details.jade", { foodies: JSON.parse(foodiesResult), admin_details: JSON.parse(adminResult), fooditems: JSON.parse(fooditemsResult), foodstock: JSON.parse(foodstockResult), });
+                });
+            });
     }
 });
 
