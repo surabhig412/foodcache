@@ -2,7 +2,6 @@ const Router = require("express").Router;
 const router = new Router();
 
 const { Admin, FoodItem, Foodie, FoodStock, } = require("../models");
-var db = require("../db");
 
 const notify = require("../notification");
 
@@ -58,40 +57,45 @@ router.get("/details", async function (req, res) {
 });
 
 router.post("/users/details/update", async function (req, res) {
-    const admin = await Admin.findOne();
-    admin.increment("amount_received", { by: req.body.amount, });
+    try {
+        const admin = await Admin.findOne();
+        admin.increment("amount_received", { by: req.body.amount, });
 
-    db.query("update foodies set amount_due = 0 where serial_no = ?", req.body.serial_no, function (err, result) {
-        if (err) res.send(err);
-    });
-    db.query("select * from foodies where serial_no = ?", req.body.serial_no, function (err, result) {
-        if (err) res.send(err);
-        notify.paymentReceived(result[0].email, result[0].channel, req.body.amount);
+        const foodie = await Foodie.findOne({ where: { serial_no: req.body.serial_no, }, });
+
+        foodie.amount_due = 0;
+        await foodie.save();
+
+        notify.paymentReceived(foodie.email, foodie.channel, req.body.amount);
         res.render("");
-    });
+    } catch (err) {
+        console.log(err);
+        res.send(err);
+    }
 });
 
 router.post("/users/details/edit", function (req, res) {
-    db.query("update foodies set amount_due = ? where serial_no = ?", [ req.body.amount, req.body.serial_no, ], function (err, result) {
-        if (err) {
-            res.send(err);
-        }
+    try {
+        Foodie.update({ amount_due: req.body.amount, }, { where: { serial_no: req.body.serial_no, }, });
         res.render("");
-    });
+    } catch (err) {
+        res.send(err);
+    }
 });
 
-router.post("/users/notify", function (req, res) {
-    db.query("select * from foodies", function (err, result) {
-        if (err) {
-            res.send(err);
-        }
-        for (let foodie of result) {
+router.post("/users/notify", async function (req, res) {
+    try {
+        const foodies = await Foodie.findAll();
+        for (let foodie of foodies) {
             if (foodie.amount_due !== 0) {
                 notify.paymentDue(foodie.email, foodie.channel, foodie.amount_due);
             }
         }
         res.render("");
-    });
+    } catch (err) {
+        console.log(err);
+        res.send(err);
+    }
 });
 
 router.post("/items/purchase", function (req, res) {
@@ -99,17 +103,14 @@ router.post("/items/purchase", function (req, res) {
 
     FoodItem.create(fooditem)
         .then(async () => {
-            const admin = await Admin.findOne({ limit: 1, });
-            return admin.decrement("amount_received", { by: fooditem.amount, });
-        })
-        .then(() => {
-            db.query("select * from foodies", function (err, result) {
-                if (err) res.send(err);
-                for (var foodie of result) {
-                    notify.itemPurchase(foodie.email, foodie.channel, req.body.items);
-                }
-                res.render("");
-            });
+            const admin = await Admin.findOne();
+            admin.decrement("amount_received", { by: fooditem.amount, });
+
+            const foodies = await Foodie.findAll();
+            for (var foodie of foodies) {
+                notify.itemPurchase(foodie.email, foodie.channel, req.body.items);
+            }
+            res.render("");
         })
         .catch(err => {
             console.log(err);
