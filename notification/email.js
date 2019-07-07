@@ -6,7 +6,7 @@ const mailgun = require("mailgun-js")({ apiKey: apiKey, domain: domain });
 class EMail {
     static send (data) {
         mailgun.messages().send(data, function (error, body) {
-            console.log(error);
+            console.error(error);
         });
     }
 }

@@ -13,6 +13,7 @@ router.post("/login", async function (req, res) {
         req.session.admin_login = true;
         res.redirect("/admin/details");
     } catch (err) {
+        console.error(err);
         res.send(err);
     }
 });
@@ -42,6 +43,7 @@ router.get("/details", async function (req, res) {
 
         res.render("admin-details.jade", { foodies: foodiesResult, fooditems: foodItems, foodstock: foodstock, admin: admin });
     } catch (err) {
+        console.error(err);
         res.send(err);
     }
 });
@@ -56,7 +58,7 @@ router.post("/users/details/update", async function (req, res) {
 
         res.render("");
     } catch (err) {
-        console.log(err);
+        console.error(err);
         res.send(err);
     }
 });
@@ -67,6 +69,7 @@ router.post("/users/details/edit", async function (req, res) {
 
         res.render("");
     } catch (err) {
+        console.error(err);
         res.send(err);
     }
 });
@@ -77,7 +80,7 @@ router.post("/users/notify", async function (req, res) {
 
         res.render("");
     } catch (err) {
-        console.log(err);
+        console.error(err);
         res.send(err);
     }
 });
@@ -94,7 +97,7 @@ router.post("/items/purchase", async function (req, res) {
 
         res.render("");
     } catch (err) {
-        console.log(err);
+        console.error(err);
         res.send(err);
     };
 });
@@ -106,7 +109,7 @@ router.post("/foodstock/add", async function (req, res) {
 
         res.render("");
     } catch (err) {
-        console.log(err);
+        console.error(err);
         res.send(err);
     };
 });
@@ -118,7 +121,7 @@ router.post("/foodstock/delete", async function (req, res) {
 
         res.render("");
     } catch (err) {
-        console.log(err);
+        console.error(err);
         res.send(err);
     }
 });

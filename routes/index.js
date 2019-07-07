@@ -22,7 +22,7 @@ router.get("/redirect", function (req, res) {
     var code = req.query.code;
     gapi.client.getToken(code, function (err, tokens) {
         if (err) {
-            console.log(err);
+            console.error(err);
             res.send(err);
         }
         gapi.client.credentials = tokens;
@@ -31,7 +31,7 @@ router.get("/redirect", function (req, res) {
             auth: gapi.client,
         }, async function (err, response) {
             if (err) {
-                console.log(err);
+                console.error(err);
                 res.send(err);
             } else {
                 try {
@@ -43,7 +43,7 @@ router.get("/redirect", function (req, res) {
 
                     res.render("profile.jade", foodie);
                 } catch (err) {
-                    console.log(err);
+                    console.error(err);
                     res.send(err);
                 }
             }
