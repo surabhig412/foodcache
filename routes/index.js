@@ -34,7 +34,7 @@ router.get("/redirect", function (req, res) {
             } else {
                 db.query("select * from foodies where email = ?", response.emails[0].value, function (err, result) {
                     if (err) res.send(err);
-                    var foodie = { id: response.id, full_name: response.displayName, image_url: response.image.url, email: response.emails[0].value, amount_due: 0, };
+                    var foodie = { id: response.id, full_name: response.displayName, image_url: response.image.url, email: response.emails[0].value, amount_due: 0 };
                     if (result.length === 0) {
                         db.query("insert into foodies set ?", foodie, function (err, result) {
                             if (err) res.send(err);

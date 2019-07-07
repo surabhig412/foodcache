@@ -55,7 +55,7 @@ var createAdminTable = function (connection) {
     connection.query(sql, function (err, result) {
         if (err) throw err;
     });
-    var admin_details = { username: process.env.admin_user, password: process.env.admin_password, amount_received: 0, email: process.env.admin_email, channel: process.env.admin_slack_channel, };
+    var admin_details = { username: process.env.admin_user, password: process.env.admin_password, amount_received: 0, email: process.env.admin_email, channel: process.env.admin_slack_channel };
     connection.query("INSERT into admin set ?", admin_details, function (err, result) {
         if (err) throw err;
     });

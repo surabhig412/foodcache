@@ -17,8 +17,8 @@ app.set("port", process.env.PORT || 3000);
 
 app.use(logger("short"));
 app.use(cookieParser());
-app.use(session({ secret: "secret", }));
-app.use(bodyParser.urlencoded({ "extended": "true", }));
+app.use(session({ secret: "secret" }));
+app.use(bodyParser.urlencoded({ "extended": "true" }));
 app.use(cors());
 app.use(helmet());
 

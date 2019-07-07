@@ -1,7 +1,7 @@
 var schedule = require("node-schedule");
 var mailgunKey = process.env.mailgun_key;
 var domain = process.env.mailgun_domain;
-var mailgun = require("mailgun-js")({ apiKey: mailgunKey, domain: domain, });
+var mailgun = require("mailgun-js")({ apiKey: mailgunKey, domain: domain });
 var db = require("./db");
 var slack = require("./slack");
 
@@ -35,7 +35,7 @@ var j = schedule.scheduleJob("0 0 10 1 * *", function () {
             });
 
             const channelID = result[index].channel;
-            slack.chat.postMessage({ channel: channelID, text: message, })
+            slack.chat.postMessage({ channel: channelID, text: message })
                 .then((res) => {
                     console.log("Message sent: ", res);
                 })
@@ -64,7 +64,7 @@ var j = schedule.scheduleJob("0 0 10 1 * *", function () {
         });
 
         const channelID = result[0].channel;
-        slack.chat.postMessage({ channel: channelID, text: foodiesResult, })
+        slack.chat.postMessage({ channel: channelID, text: foodiesResult })
             .then((res) => {
                 console.log("Message sent: ", res);
             })

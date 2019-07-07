@@ -43,7 +43,7 @@ function paidBtnClicked (serial_no, amount) {
     $.ajax({
         url: "/admin/users/details/update",
         method: "post",
-        data: { serial_no: serial_no, amount: amount, },
+        data: { serial_no: serial_no, amount: amount },
         success: function (data) {
             window.location.reload();
         },
@@ -62,7 +62,7 @@ function saveBtnClicked (serial_no) {
     $.ajax({
         url: "/admin/users/details/edit",
         method: "post",
-        data: { serial_no: serial_no, amount: $("#editamount").val(), },
+        data: { serial_no: serial_no, amount: $("#editamount").val() },
         success: function (data) {
             window.location.reload();
         },

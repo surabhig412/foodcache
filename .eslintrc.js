@@ -20,7 +20,7 @@ module.exports = {
        "semi": ["error", "always"],
 
        // override default options for rules from base configurations
-       "comma-dangle": ["error", "always"],
+       "comma-dangle": ["error", "always-multiline"],
        "no-cond-assign": ["error", "always"],
 
        // disable rules from base configurations

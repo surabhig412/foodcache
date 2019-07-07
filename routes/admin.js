@@ -1,7 +1,7 @@
 const Router = require("express").Router;
 const router = new Router();
 
-const { Admin, FoodItem, Foodie, FoodStock, } = require("../models");
+const { Admin, FoodItem, Foodie, FoodStock } = require("../models");
 
 const notify = require("../notification");
 
@@ -47,10 +47,10 @@ router.get("/details", async function (req, res) {
         const foodstock = await FoodStock.findAll();
         const foodstockResult = JSON.stringify(foodstock);
 
-        const result = await Admin.findAll({ attributes: [ "amount_received", ], limit: 1, });
+        const result = await Admin.findAll({ attributes: [ "amount_received" ], limit: 1 });
         const adminResult = JSON.stringify(result);
 
-        res.render("admin-details.jade", { foodies: JSON.parse(foodiesResult), admin_details: JSON.parse(adminResult), fooditems: JSON.parse(fooditemsResult), foodstock: JSON.parse(foodstockResult), });
+        res.render("admin-details.jade", { foodies: JSON.parse(foodiesResult), admin_details: JSON.parse(adminResult), fooditems: JSON.parse(fooditemsResult), foodstock: JSON.parse(foodstockResult) });
     } catch (err) {
         res.send(err);
     }
@@ -59,9 +59,9 @@ router.get("/details", async function (req, res) {
 router.post("/users/details/update", async function (req, res) {
     try {
         const admin = await Admin.findOne();
-        admin.increment("amount_received", { by: req.body.amount, });
+        admin.increment("amount_received", { by: req.body.amount });
 
-        const foodie = await Foodie.findOne({ where: { serial_no: req.body.serial_no, }, });
+        const foodie = await Foodie.findOne({ where: { serial_no: req.body.serial_no } });
 
         foodie.amount_due = 0;
         await foodie.save();
@@ -77,7 +77,7 @@ router.post("/users/details/update", async function (req, res) {
 
 router.post("/users/details/edit", async function (req, res) {
     try {
-        await Foodie.update({ amount_due: req.body.amount, }, { where: { serial_no: req.body.serial_no, }, });
+        await Foodie.update({ amount_due: req.body.amount }, { where: { serial_no: req.body.serial_no } });
 
         res.render("");
     } catch (err) {
@@ -103,12 +103,12 @@ router.post("/users/notify", async function (req, res) {
 
 router.post("/items/purchase", async function (req, res) {
     try {
-        var fooditem = { items: req.body.items, description: req.body.description, amount: req.body.amount, };
+        var fooditem = { items: req.body.items, description: req.body.description, amount: req.body.amount };
 
         FoodItem.create(fooditem);
 
         const admin = await Admin.findOne();
-        admin.decrement("amount_received", { by: fooditem.amount, });
+        admin.decrement("amount_received", { by: fooditem.amount });
 
         const foodies = await Foodie.findAll();
         for (var foodie of foodies) {
@@ -124,7 +124,7 @@ router.post("/items/purchase", async function (req, res) {
 
 router.post("/foodstock/add", async function (req, res) {
     try {
-        const foodstockItem = { fooditem: req.body.fooditem, };
+        const foodstockItem = { fooditem: req.body.fooditem };
         await FoodStock.create(foodstockItem);
 
         res.render("");
@@ -136,8 +136,8 @@ router.post("/foodstock/add", async function (req, res) {
 
 router.post("/foodstock/delete", async function (req, res) {
     try {
-        const itemID = { id: req.body.id, };
-        await FoodStock.destroy({ where: itemID, });
+        const itemID = { id: req.body.id };
+        await FoodStock.destroy({ where: itemID });
 
         res.render("");
     } catch (err) {
