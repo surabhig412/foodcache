@@ -5,8 +5,7 @@ const { Admin, FoodItem, Foodie, FoodStock } = require("../models");
 
 router.post("/login", async function (req, res) {
     try {
-        const admin = await Admin.findOne();
-        if (admin.username !== req.body.username || admin.password !== req.body.password) {
+        if (!await Admin.isAdmin(req.body.username, req.body.password)) {
             res.redirect("/");
             return;
         }

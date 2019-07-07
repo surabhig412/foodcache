@@ -33,6 +33,14 @@ class Admin extends Sequelize.Model {
                 timestamps: false,
             });
     }
+
+    static async isAdmin (username, password) {
+        const admin = await Admin.findOne();
+        if (admin.username !== username || admin.password !== password) {
+            return false;
+        }
+        return true;
+    }
 }
 
 module.exports = Admin;
