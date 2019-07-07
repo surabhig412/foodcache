@@ -5,7 +5,7 @@ var gapi = require("../gapi");
 const googleapis = require("googleapis");
 const plus = googleapis.plus("v1");
 
-var db = require("../db");
+const { Foodie } = require("../models");
 
 const adminRoutes = require("./admin");
 router.use("/admin", adminRoutes);
@@ -22,28 +22,30 @@ router.get("/redirect", function (req, res) {
     var code = req.query.code;
     gapi.client.getToken(code, function (err, tokens) {
         if (err) {
+            console.log(err);
             res.send(err);
         }
         gapi.client.credentials = tokens;
         plus.people.get({
             userId: "me",
             auth: gapi.client,
-        }, function (err, response) {
+        }, async function (err, response) {
             if (err) {
+                console.log(err);
                 res.send(err);
             } else {
-                db.query("select * from foodies where email = ?", response.emails[0].value, function (err, result) {
-                    if (err) res.send(err);
-                    var foodie = { id: response.id, full_name: response.displayName, image_url: response.image.url, email: response.emails[0].value, amount_due: 0 };
-                    if (result.length === 0) {
-                        db.query("insert into foodies set ?", foodie, function (err, result) {
-                            if (err) res.send(err);
-                        });
-                    } else {
-                        foodie["amount_due"] = result[0].amount_due;
-                    }
+                try {
+                    const [foodie] = await Foodie.findOrCreate({
+                        raw: true,
+                        where: { email: response.emails[0].value },
+                        defaults: { id: response.id, full_name: response.displayName, image_url: response.image.url, email: response.emails[0].value, amount_due: 0 },
+                    });
+
                     res.render("profile.jade", foodie);
-                });
+                } catch (err) {
+                    console.log(err);
+                    res.send(err);
+                }
             }
         });
     });
