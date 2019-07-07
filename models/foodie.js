@@ -39,6 +39,13 @@ class Foodie extends Sequelize.Model {
             });
     }
 
+    async addMonthlyDue (amount) {
+        this.amount_due = parseFloat(this.amount_due) + amount;
+        await this.save();
+
+        this.notifyPaymentDue();
+    }
+
     async paymentReceived () {
         this.amount_due = 0;
         await this.save();

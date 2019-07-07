@@ -4,6 +4,20 @@ const email = require("./email");
 
 // TODO test with real token
 class Notify {
+    static adminBalance (mailID, channel, amount) {
+        const message = "Balance Amount: Rs. " + amount;
+
+        var data = {
+            from: "Foodcache <donotreply@foodcache.com>",
+            to: mailID,
+            subject: "Foodcache details",
+            text: message,
+        };
+
+        email.send(data);
+        slack.notify(channel, message);
+    }
+
     static paymentDue (mailID, channel, amountDue) {
         var message = "Please pay your dues for this month. Your total due amount is Rs. " + amountDue;
 

@@ -1,4 +1,5 @@
 const Sequelize = require("sequelize");
+const notify = require("../notification");
 
 class Admin extends Sequelize.Model {
     static init (sequelize) {
@@ -40,6 +41,11 @@ class Admin extends Sequelize.Model {
             return false;
         }
         return true;
+    }
+
+    static async notifyBalance () {
+        const admin = await Admin.findOne();
+        notify.adminBalance(admin.email, admin.channel, admin.amount_received);
     }
 }
 

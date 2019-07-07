@@ -1,5 +1,5 @@
 const Sequelize = require("sequelize");
-const { Admin, FoodItem, Foodie, FoodStock, } = require("./models");
+const { Admin, FoodItem, Foodie, FoodStock } = require("./models");
 
 class Database {
     constructor () {
