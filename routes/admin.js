@@ -60,11 +60,7 @@ router.post("/users/details/update", async function (req, res) {
         admin.increment("amount_received", { by: req.body.amount });
 
         const foodie = await Foodie.findOne({ where: { serial_no: req.body.serial_no } });
-
-        foodie.amount_due = 0;
-        await foodie.save();
-
-        foodie.notifyPaymentReceived();
+        await foodie.paymentReceived();
 
         res.render("");
     } catch (err) {

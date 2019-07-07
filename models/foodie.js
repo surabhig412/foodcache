@@ -39,6 +39,13 @@ class Foodie extends Sequelize.Model {
             });
     }
 
+    async paymentReceived () {
+        this.amount_due = 0;
+        await this.save();
+
+        this.notifyPaymentReceived();
+    }
+
     notifyPaymentReceived (amount) {
         notify.paymentReceived(this.email, this.channel, amount);
     }
