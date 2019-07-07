@@ -12,7 +12,7 @@ class Foodie extends Sequelize.Model {
                     primaryKey: true,
                 },
                 id: {
-                    type: Sequelize.INTEGER,
+                    type: Sequelize.STRING,
                 },
                 full_name: {
                     type: Sequelize.STRING, // refers to foodstock.fooditem
@@ -37,6 +37,7 @@ class Foodie extends Sequelize.Model {
                 tableName: "foodies",
                 timestamps: false,
             });
+        this.sync();
     }
 
     async addMonthlyDue (amount) {

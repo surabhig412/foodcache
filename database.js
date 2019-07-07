@@ -8,22 +8,19 @@ class Database {
             dialect: "mysql",
             // logging: console.log,
         });
-
-        this.sql.authenticate()
-            .then(() => {
-                // console.log("Connection has been established successfully.");
-                this.init(this.sql);
-            })
-            .catch(err => {
-                console.error("Unable to connect to the database:", err);
-            });
     }
 
-    init (sql) {
-        this.Admin = Admin.init(sql);
-        this.FoodItem = FoodItem.init(sql);
-        this.Foodie = Foodie.init(sql);
-        this.FoodStock = FoodStock.init(sql);
+    async init () {
+        try {
+            await this.sql.authenticate();
+
+            Admin.init(this.sql);
+            FoodItem.init(this.sql);
+            Foodie.init(this.sql);
+            FoodStock.init(this.sql);
+        } catch (err) {
+            console.error("Unable to connect to the database:", err);
+        }
     }
 }
 

@@ -26,6 +26,7 @@ class FoodItem extends Sequelize.Model {
                 tableName: "fooditems",
                 timestamps: false,
             });
+        this.sync();
     }
 }
 

@@ -2,10 +2,11 @@ require("dotenv").config();
 
 var schedule = require("node-schedule");
 
+const Database = require("./database");
 const { Admin, Foodie } = require("./models");
 
-const Database = require("./database");
 const database = new Database();
+database.init();
 
 var j = schedule.scheduleJob("0 0 10 1 * *", async function () {
     try {

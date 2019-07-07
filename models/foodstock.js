@@ -20,6 +20,8 @@ class FoodStock extends Sequelize.Model {
                 tableName: "foodstock",
                 timestamps: false,
             });
+
+        this.sync();
     }
 }
 

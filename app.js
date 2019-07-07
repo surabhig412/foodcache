@@ -23,6 +23,7 @@ app.use(cors());
 app.use(helmet());
 
 const database = new Database();
+database.init();
 
 app.use("/", apiRoutes);
 

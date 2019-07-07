@@ -2,7 +2,7 @@ const Sequelize = require("sequelize");
 const notify = require("../notification");
 
 class Admin extends Sequelize.Model {
-    static init (sequelize) {
+    static async init (sequelize) {
         super.init(
             // attributes
             {
@@ -33,6 +33,13 @@ class Admin extends Sequelize.Model {
                 tableName: "admin",
                 timestamps: false,
             });
+        await this.sync();
+
+        await this.findOrCreate({
+            raw: true,
+            where: { email: process.env.admin_email },
+            defaults: { username: process.env.admin_user, password: process.env.admin_password, amount_received: 0, email: process.env.admin_email, channel: process.env.admin_slack_channel },
+        });
     }
 
     static async isAdmin (username, password) {
