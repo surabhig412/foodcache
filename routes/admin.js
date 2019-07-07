@@ -35,19 +35,12 @@ router.use(checkAdminLoggedIn);
 
 router.get("/details", async function (req, res) {
     try {
-        var foodiesResult = await Foodie.findAll();
-        foodiesResult = JSON.stringify(foodiesResult);
-
+        const foodiesResult = await Foodie.findAll();
         const foodItems = await FoodItem.findAll();
-        const fooditemsResult = JSON.stringify(foodItems);
-
         const foodstock = await FoodStock.findAll();
-        const foodstockResult = JSON.stringify(foodstock);
+        const admin = await Admin.findOne({ attributes: [ "amount_received" ] });
 
-        const result = await Admin.findAll({ attributes: [ "amount_received" ], limit: 1 });
-        const adminResult = JSON.stringify(result);
-
-        res.render("admin-details.jade", { foodies: JSON.parse(foodiesResult), admin_details: JSON.parse(adminResult), fooditems: JSON.parse(fooditemsResult), foodstock: JSON.parse(foodstockResult) });
+        res.render("admin-details.jade", { foodies: foodiesResult, fooditems: foodItems, foodstock: foodstock, admin: admin });
     } catch (err) {
         res.send(err);
     }
