@@ -35,10 +35,6 @@ You can manually export the environment variables also.
 npm install
 ```
 
-* Create database and required tables
-```
-npm run prestart
-```
 
 * Start the application
 ```
