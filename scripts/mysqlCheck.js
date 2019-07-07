@@ -1,6 +1,6 @@
 require("dotenv").config();
 
-var mysql = require("mysql");
+var mysql = require("mysql2");
 
 var createDatabase = function () {
     var connection = mysql.createConnection({
