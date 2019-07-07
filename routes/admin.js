@@ -3,8 +3,6 @@ const router = new Router();
 
 const { Admin, FoodItem, Foodie, FoodStock } = require("../models");
 
-const notify = require("../notification");
-
 router.post("/login", async function (req, res) {
     try {
         const admin = await Admin.findOne();
@@ -66,7 +64,7 @@ router.post("/users/details/update", async function (req, res) {
         foodie.amount_due = 0;
         await foodie.save();
 
-        notify.paymentReceived(foodie.email, foodie.channel, req.body.amount);
+        foodie.notifyPaymentReceived();
 
         res.render("");
     } catch (err) {
@@ -87,12 +85,7 @@ router.post("/users/details/edit", async function (req, res) {
 
 router.post("/users/notify", async function (req, res) {
     try {
-        const foodies = await Foodie.findAll();
-        for (let foodie of foodies) {
-            if (foodie.amount_due !== 0) {
-                notify.paymentDue(foodie.email, foodie.channel, foodie.amount_due);
-            }
-        }
+        await Foodie.notifyAllPaymentDue();
 
         res.render("");
     } catch (err) {
@@ -104,16 +97,12 @@ router.post("/users/notify", async function (req, res) {
 router.post("/items/purchase", async function (req, res) {
     try {
         var fooditem = { items: req.body.items, description: req.body.description, amount: req.body.amount };
-
         FoodItem.create(fooditem);
 
         const admin = await Admin.findOne();
         admin.decrement("amount_received", { by: fooditem.amount });
 
-        const foodies = await Foodie.findAll();
-        for (var foodie of foodies) {
-            notify.itemPurchase(foodie.email, foodie.channel, req.body.items);
-        }
+        await Foodie.notifyAllAboutPurchase(req.body.items);
 
         res.render("");
     } catch (err) {

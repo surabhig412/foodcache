@@ -1,4 +1,5 @@
 const Sequelize = require("sequelize");
+const notify = require("../notification");
 
 class Foodie extends Sequelize.Model {
     static init (sequelize) {
@@ -36,6 +37,34 @@ class Foodie extends Sequelize.Model {
                 tableName: "foodies",
                 timestamps: false,
             });
+    }
+
+    notifyPaymentReceived (amount) {
+        notify.paymentReceived(this.email, this.channel, amount);
+    }
+
+    notifyItemPurchase (items) {
+        notify.itemPurchase(this.email, this.channel, items);
+    }
+
+    notifyPaymentDue () {
+        if (this.amount_due !== 0) {
+            notify.paymentDue(this.email, this.channel, this.amount_due);
+        }
+    }
+
+    static async notifyAllAboutPurchase (items) {
+        const foodies = await Foodie.findAll();
+        for (let foodie of foodies) {
+            foodie.notifyItemPurchase(items);
+        }
+    }
+
+    static async notifyAllPaymentDue () {
+        const foodies = await Foodie.findAll();
+        for (let foodie of foodies) {
+            foodie.notifyPaymentDue();
+        }
     }
 }
 
