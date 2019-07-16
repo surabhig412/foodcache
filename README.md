@@ -1,6 +1,7 @@
 # Foodcache
 [![DeepScan grade](https://deepscan.io/api/teams/4676/projects/6427/branches/53364/badge/grade.svg)](https://deepscan.io/dashboard#view=project&tid=4676&pid=6427&bid=53364)
 ![David](https://img.shields.io/david/souvikmaji/foodcache.svg)
+[![Codacy Badge](https://api.codacy.com/project/badge/Grade/3a11f7ed80aa450a9a867cf8f1f5d625)](https://www.codacy.com/app/souvikmaji/foodcache?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=souvikmaji/foodcache&amp;utm_campaign=Badge_Grade)
 
 Application to keep track of money paid and received for office pantry. It gives monthly email alerts to all its users. The admin of this application can handle accounts and can view which users still owe money.
 
