@@ -1,7 +1,7 @@
 {
   "name": "foodcache",
-  "version": "0.0.1",
-  "description": "Simple application to keep track of money paid for office food items",
+  "version": "2.0.0",
+  "description": "Office Pantry Management",
   "private": true,
   "main": "app.js",
   "author": "Surabhi",
@@ -9,13 +9,26 @@
     "@slack/client": "^4.3.1",
     "body-parser": "~1.17.2",
     "cookie-parser": "~1.4.3",
+    "cors": "^2.8.5",
+    "dotenv": "^8.0.0",
     "express": "~4.15.3",
     "express-session": "~1.15.5",
     "googleapis": "~20.1.0",
+    "helmet": "^3.18.0",
     "jade": "~1.11.0",
     "mailgun-js": "~0.12.0",
-    "mysql": "~2.13.0",
-    "node-schedule": "~1.2.3"
+    "morgan": "^1.9.1",
+    "mysql2": "^1.6.5",
+    "node-schedule": "~1.2.3",
+    "sequelize": "^5.9.0"
+  },
+  "devDependencies": {
+    "eslint": "^5.16.0",
+    "eslint-config-standard": "^12.0.0",
+    "eslint-plugin-import": "^2.17.3",
+    "eslint-plugin-node": "^8.0.1",
+    "eslint-plugin-promise": "^4.1.1",
+    "eslint-plugin-standard": "^4.0.0"
   },
   "scripts": {
     "prestart": "node scripts/mysqlCheck.js",

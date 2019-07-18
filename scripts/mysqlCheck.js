@@ -1,79 +1,23 @@
-var mysql = require('mysql');
+require("dotenv").config();
 
-var createDatabase = function() {
-  var connection = mysql.createConnection({
-    host: process.env.mysql_host,
-    user: process.env.mysql_user,
-    password: process.env.mysql_password,
-  });
-  connection.connect(function(err) {
-    if (err) throw err;
-    var sql = "CREATE DATABASE IF NOT EXISTS foodcache";
-    connection.query(sql, function (err, result) {
-      if (err) throw err;
-      connection.query("use foodcache");
-      connection.query("SHOW TABLES LIKE 'foodies'", function(err, result) {
-        if(err) throw err;
-        if(result.length === 0) {
-          createTable(connection);
-        }
-      });
-      connection.query("SHOW TABLES LIKE 'admin'", function(err, result) {
-        if(err) throw err;
-        if(result.length === 0) {
-          createAdminTable(connection);
-        }
-      });
-      connection.query("SHOW TABLES LIKE 'foodstock'", function(err, result) {
-        if(err) throw err;
-        if(result.length === 0) {
-          createFoodstockTable(connection);
-        }
-      });
-      connection.query("SHOW TABLES LIKE 'fooditems'", function(err, result) {
-        if(err) throw err;
-        if(result.length === 0) {
-          createFoodItemsTable(connection);
-        }
-        connection.end();
-      });
-    });
-  });
-}
+var mysql = require("mysql2");
 
-var createTable = function(connection) {
-    var sql = "CREATE TABLE foodies (serial_no INT AUTO_INCREMENT PRIMARY KEY, id VARCHAR(255), full_name VARCHAR(255), image_url VARCHAR(255), email VARCHAR(255), amount_due DECIMAL(15,2), channel VARCHAR(255))";
-    connection.query(sql, function (err, result) {
-      if (err) throw err;
+var createDatabase = function () {
+    var connection = mysql.createConnection({
+        host: process.env.mysql_host,
+        user: process.env.mysql_user,
+        password: process.env.mysql_password,
     });
-}
 
-var createAdminTable = function(connection) {
-    var sql = "CREATE TABLE admin (username VARCHAR(255), password VARCHAR(255), amount_received DECIMAL(15,2), email VARCHAR(255), channel VARCHAR(255))";
-    connection.query(sql, function (err, result) {
-      if (err) throw err;
-    });
-    var admin_details = {username: process.env.admin_user, password: process.env.admin_password, amount_received: 0, email: process.env.admin_email, channel: process.env.admin_slack_channel};
-    connection.query("INSERT into admin set ?", admin_details, function (err, result) {
-      if (err) throw err;
-    });
-}
+    connection.connect(function (err) {
+        if (err) throw err;
+        var sql = "CREATE DATABASE IF NOT EXISTS foodcache";
+        connection.query(sql, function (err, result) {
+            if (err) throw err;
 
-var createFoodstockTable = function(connection) {
-    var sql = "CREATE TABLE foodstock (id INT AUTO_INCREMENT PRIMARY KEY, fooditem VARCHAR(255))";
-    connection.query(sql, function (err, result) {
-      if (err) throw err;
+            connection.end();
+        });
     });
-    connection.query("INSERT into foodstock(fooditem) values ('Biscuits'),('Milk Powder'),('Coffee'),('Tea'),('Sugar'),('Snacks'),('Vim')", function (err, result) {
-      if (err) throw err;
-    });
-}
-
-var createFoodItemsTable = function(connection) {
-    var sql = "CREATE TABLE fooditems (id INT AUTO_INCREMENT PRIMARY KEY, items VARCHAR(255), description VARCHAR(255), amount DECIMAL(15,2))";
-    connection.query(sql, function (err, result) {
-      if (err) throw err;
-    });
-}
+};
 
 createDatabase();
