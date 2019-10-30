@@ -20,7 +20,7 @@
     "morgan": "^1.9.1",
     "mysql2": "^1.6.5",
     "node-schedule": "~1.2.3",
-    "sequelize": "^5.9.0"
+    "sequelize": "^5.15.1"
   },
   "devDependencies": {
     "eslint": "^5.16.0",
